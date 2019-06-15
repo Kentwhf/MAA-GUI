@@ -1,0 +1,484 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Example</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-05-28"><meta name="DC.source" content="Example.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">EXAMPLE 1</a></li><li><a href="#3">EXAMPLE 2</a></li><li><a href="#4">EXAMPLE 3</a></li><li><a href="#5">EXAMPLE 3</a></li><li><a href="#7">EXAMPLE 4</a></li><li><a href="#8">EXAMPLE 5</a></li><li><a href="#10">EXAMPLE 6</a></li></ul></div><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;clc;
+</pre><h2>EXAMPLE 1<a name="2"></a></h2><p>Example 1: Bendat and piersol, Random data, 2010, page 99 Example 4.4</p><pre class="codeinput">data = [5.2,6.2,3.7,6.4,3.9,4.0,3.9,5.3,4,4.6,5.9,6.5,4.3,5.7,3.1,5.6,5.2,3.9,6.2,5.0];
+[ResultTest,A,Ainf,Asup] = RA_test(data,1)
+</pre><pre class="codeoutput">
+ResultTest =
+
+     1
+
+
+A =
+
+    86
+
+
+Ainf =
+
+    65
+
+
+Asup =
+
+   125
+
+</pre><h2>EXAMPLE 2<a name="3"></a></h2><p>White noise  - stationnary - method 1</p><pre class="codeinput">N = 1000; <span class="comment">% number of data points</span>
+data = randn(1,N);
+[ResultTest,A,Ainf,Asup] = RA_test(data,1)
+
+<span class="comment">% plot the reverse arrangement as a function of the sample size</span>
+<span class="comment">% Inspired from:</span>
+<span class="comment">% -------------------------------------------------------------------------</span>
+<span class="comment">% Analysis of trends between solar wind velocity and energetic electron</span>
+<span class="comment">% fluxes at geostationary orbit using the reverse arrangement test</span>
+<span class="comment">% H Aryan - ?2013</span>
+<span class="comment">% -------------------------------------------------------------------------</span>
+clear <span class="string">Res</span> <span class="string">A</span> <span class="string">Ainf</span> <span class="string">Asup</span>
+rng(1)
+jj=1;
+Ndata = 50:50:N;
+<span class="keyword">for</span> ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,1);
+    jj=jj+1;
+<span class="keyword">end</span>
+figure
+plot(Ndata,A,<span class="string">'r'</span>,Ndata,Ainf,<span class="string">'k--'</span>,Ndata,Asup,<span class="string">'k:'</span>)
+xlabel(<span class="string">'Number of data'</span>)
+ylabel(<span class="string">'reverse arrangements'</span>);
+legend(<span class="string">'Measured'</span>,<span class="string">'lower boundary'</span>,<span class="string">'upper boundary'</span>,<span class="string">'location'</span>,<span class="string">'NorthWest'</span>)
+set(gcf,<span class="string">'color'</span>,<span class="string">'w'</span>)
+<span class="comment">% The red curve falls between the upper and lower boundary: The signal is</span>
+<span class="comment">% stationnary</span>
+</pre><pre class="codeoutput">
+ResultTest =
+
+     1
+
+
+A =
+
+      253666
+
+
+Ainf =
+
+      239412
+
+
+Asup =
+
+      260088
+
+</pre><img vspace="5" hspace="5" src="Example_01.png" alt=""> <h2>EXAMPLE 3<a name="4"></a></h2><p>White noise  - stationnary - method 2</p><pre class="codeinput">clear <span class="string">Res</span> <span class="string">A</span> <span class="string">Ainf</span> <span class="string">Asup</span>
+jj=1;
+Ndata = [50:50:N];
+<span class="keyword">for</span> ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,2);
+    jj=jj+1;
+<span class="keyword">end</span>
+
+figure
+plot(Ndata,A,<span class="string">'r'</span>,Ndata,Ainf,<span class="string">'k--'</span>,Ndata,Asup,<span class="string">'k:'</span>)
+xlabel(<span class="string">'Number of data'</span>)
+ylabel(<span class="string">'reverse arrangements'</span>);
+legend(<span class="string">'Measured'</span>,<span class="string">'lower boundary'</span>,<span class="string">'upper boundary'</span>,<span class="string">'location'</span>,<span class="string">'NorthWest'</span>)
+set(gcf,<span class="string">'color'</span>,<span class="string">'w'</span>)
+ylim([-5,5])
+<span class="comment">% The red curve falls between the upper and lower boundary: The signal is</span>
+<span class="comment">% stationnary</span>
+</pre><img vspace="5" hspace="5" src="Example_02.png" alt=""> <h2>EXAMPLE 3<a name="5"></a></h2><p>White noise  - non stationnary (trend) - method 1 plot the reverse arrangement as a function of the sample size</p><pre class="codeinput">rng(1)
+myTrend =-0.003.*linspace(0,N,N);
+t = linspace(0,12,N); <span class="comment">% time</span>
+data = randn(1,N)+myTrend;
+
+
+<span class="comment">% Let's have a look of the time serie generated.</span>
+figure
+hold <span class="string">on</span>;box <span class="string">on</span>
+plot(t,data);
+plot(t,myTrend,<span class="string">'r'</span>); <span class="comment">% a significativ trend is visible</span>
+legend(<span class="string">'measured'</span>,<span class="string">'trend'</span>)
+xlabel(<span class="string">'time (months)'</span>);
+ylabel(<span class="string">'popularity among girls'</span>)
+set(gcf,<span class="string">'color'</span>,<span class="string">'w'</span>)
+</pre><img vspace="5" hspace="5" src="Example_03.png" alt=""> <pre class="codeinput">clear <span class="string">Res</span> <span class="string">A</span> <span class="string">Ainf</span> <span class="string">Asup</span>
+jj=1;
+Ndata = 50:50:N;
+<span class="keyword">for</span> ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,1);
+    jj=jj+1;
+<span class="keyword">end</span>
+
+
+clf;close <span class="string">all</span>
+figure
+plot(Ndata,A,<span class="string">'r'</span>,Ndata,Ainf,<span class="string">'k--'</span>,Ndata,Asup,<span class="string">'k:'</span>)
+xlabel(<span class="string">'Number of data'</span>)
+ylabel(<span class="string">'reverse arrangements'</span>);
+legend(<span class="string">'Measured'</span>,<span class="string">'lower boundary'</span>,<span class="string">'upper boundary'</span>,<span class="string">'location'</span>,<span class="string">'NorthWest'</span>)
+set(gcf,<span class="string">'color'</span>,<span class="string">'w'</span>)
+<span class="comment">% The red curve falls outside the upper and lower boundary: The signal is</span>
+<span class="comment">% non-stationnary</span>
+</pre><img vspace="5" hspace="5" src="Example_04.png" alt=""> <h2>EXAMPLE 4<a name="7"></a></h2><p>White noise  - non stationnary (trend) - method 2 plot the reverse arrangement as a function of the sample size</p><pre class="codeinput">clear <span class="string">Res</span> <span class="string">A</span> <span class="string">Ainf</span> <span class="string">Asup</span>
+jj=1;
+<span class="keyword">for</span> ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,2);
+    jj=jj+1;
+<span class="keyword">end</span>
+figure
+plot(Ndata,A,<span class="string">'r'</span>,Ndata,Ainf,<span class="string">'k--'</span>,Ndata,Asup,<span class="string">'k:'</span>)
+xlabel(<span class="string">'Number of data'</span>)
+ylabel(<span class="string">'reverse arrangements'</span>);
+legend(<span class="string">'Measured'</span>,<span class="string">'lower boundary'</span>,<span class="string">'upper boundary'</span>,<span class="string">'location'</span>,<span class="string">'NorthWest'</span>)
+ylim([-10,10])
+<span class="comment">% The red curve falls outside the upper and lower boundary: The signal is</span>
+<span class="comment">% non-stationnary</span>
+</pre><img vspace="5" hspace="5" src="Example_05.png" alt=""> <h2>EXAMPLE 5<a name="8"></a></h2><p>White noise  - non stationnary (sinusoid) - method 1 plot the reverse arrangement as a function of the sample size</p><pre class="codeinput"><span class="comment">% White noise  - non stationnary (trend) - method 1</span>
+<span class="comment">% plot the reverse arrangement as a function of the sample size</span>
+rng(1)
+t = linspace(0,12,N); <span class="comment">% time</span>
+myAverage =sin(0.5.*t);
+data = randn(1,N)+myAverage;
+
+
+<span class="comment">% Let's have a look of the time serie generated.</span>
+figure
+hold <span class="string">on</span>;box <span class="string">on</span>
+plot(t,data);
+plot(t,myAverage,<span class="string">'r'</span>); <span class="comment">% a significativ trend is visible</span>
+legend(<span class="string">'measured'</span>,<span class="string">'sinusoid'</span>)
+xlabel(<span class="string">'time (s)'</span>);
+ylabel(<span class="string">'popularity among girls'</span>)
+set(gcf,<span class="string">'color'</span>,<span class="string">'w'</span>)
+</pre><img vspace="5" hspace="5" src="Example_06.png" alt=""> <p>Reverse arrangement calculation</p><pre class="codeinput">clear <span class="string">Res</span> <span class="string">A</span> <span class="string">Ainf</span> <span class="string">Asup</span>
+jj=1;
+Ndata = 50:50:N;
+<span class="keyword">for</span> ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,1);
+    jj=jj+1;
+<span class="keyword">end</span>
+
+
+figure
+plot(Ndata,A,<span class="string">'r'</span>,Ndata,Ainf,<span class="string">'k--'</span>,Ndata,Asup,<span class="string">'k:'</span>)
+xlabel(<span class="string">'Number of data'</span>)
+ylabel(<span class="string">'reverse arrangements'</span>);
+legend(<span class="string">'Measured'</span>,<span class="string">'lower boundary'</span>,<span class="string">'upper boundary'</span>,<span class="string">'location'</span>,<span class="string">'NorthWest'</span>)
+set(gcf,<span class="string">'color'</span>,<span class="string">'w'</span>)
+<span class="comment">% The red curve falls outside the upper and lower boundary: The signal is</span>
+<span class="comment">% non-stationnary</span>
+</pre><img vspace="5" hspace="5" src="Example_07.png" alt=""> <h2>EXAMPLE 6<a name="10"></a></h2><p>White noise  - non stationnary (step function) - method 2 plot the reverse arrangement as a function of the sample size</p><pre class="codeinput"><span class="comment">% White noise  - non stationnary (trend) - method 1</span>
+<span class="comment">% plot the reverse arrangement as a function of the sample size</span>
+rng(1)
+t = linspace(0,4,N); <span class="comment">% time</span>
+myStep =10.*[ones(1,round(2/4*N)),zeros(1,round(2/4*N))];
+data = 10+randn(1,N)+myStep;
+
+
+<span class="comment">% Let's have a look of the time serie generated.</span>
+figure
+hold <span class="string">on</span>;box <span class="string">on</span>
+plot(t,data);
+plot(t,10+myStep,<span class="string">'r'</span>); <span class="comment">% a significativ trend is visible</span>
+legend(<span class="string">'measured'</span>,<span class="string">'step function'</span>)
+xlabel(<span class="string">'rounds'</span>);
+ylabel(<span class="string">'Ronda Roussey dignity'</span>)
+set(gcf,<span class="string">'color'</span>,<span class="string">'w'</span>)
+</pre><img vspace="5" hspace="5" src="Example_08.png" alt=""> <p>Reverse arrangement calculation</p><pre class="codeinput">clear <span class="string">Res</span> <span class="string">A</span> <span class="string">Ainf</span> <span class="string">Asup</span>
+jj=1;
+Ndata = 50:50:N;
+<span class="keyword">for</span> ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,2);
+    jj=jj+1;
+<span class="keyword">end</span>
+
+figure
+plot(Ndata,A,<span class="string">'r'</span>,Ndata,Ainf,<span class="string">'k--'</span>,Ndata,Asup,<span class="string">'k:'</span>)
+xlabel(<span class="string">'Number of data'</span>)
+ylabel(<span class="string">'reverse arrangements'</span>);
+legend(<span class="string">'Measured'</span>,<span class="string">'lower boundary'</span>,<span class="string">'upper boundary'</span>,<span class="string">'location'</span>,<span class="string">'NorthWest'</span>)
+set(gcf,<span class="string">'color'</span>,<span class="string">'w'</span>)
+<span class="comment">% The red curve falls outside the upper and lower boundary after the step function: The signal is</span>
+<span class="comment">% non-stationnary</span>
+ylim([-10,10])
+</pre><img vspace="5" hspace="5" src="Example_09.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear all;close all;clc;
+
+%% EXAMPLE 1
+% Example 1: Bendat and piersol, Random data, 2010, page 99
+% Example 4.4
+data = [5.2,6.2,3.7,6.4,3.9,4.0,3.9,5.3,4,4.6,5.9,6.5,4.3,5.7,3.1,5.6,5.2,3.9,6.2,5.0];
+[ResultTest,A,Ainf,Asup] = RA_test(data,1)
+%% EXAMPLE 2
+% White noise  - stationnary - method 1
+N = 1000; % number of data points
+data = randn(1,N);
+[ResultTest,A,Ainf,Asup] = RA_test(data,1)
+
+% plot the reverse arrangement as a function of the sample size
+% Inspired from:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% Analysis of trends between solar wind velocity and energetic electron
+% fluxes at geostationary orbit using the reverse arrangement test
+% H Aryan - ?2013
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+clear Res A Ainf Asup
+rng(1)
+jj=1;
+Ndata = 50:50:N;
+for ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,1);
+    jj=jj+1;
+end
+figure
+plot(Ndata,A,'r',Ndata,Ainf,'kREPLACE_WITH_DASH_DASH',Ndata,Asup,'k:')
+xlabel('Number of data')
+ylabel('reverse arrangements');
+legend('Measured','lower boundary','upper boundary','location','NorthWest')
+set(gcf,'color','w')
+% The red curve falls between the upper and lower boundary: The signal is
+% stationnary 
+
+%% EXAMPLE 3
+% White noise  - stationnary - method 2
+clear Res A Ainf Asup
+jj=1;
+Ndata = [50:50:N];
+for ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,2);
+    jj=jj+1;
+end
+
+figure
+plot(Ndata,A,'r',Ndata,Ainf,'kREPLACE_WITH_DASH_DASH',Ndata,Asup,'k:')
+xlabel('Number of data')
+ylabel('reverse arrangements');
+legend('Measured','lower boundary','upper boundary','location','NorthWest')
+set(gcf,'color','w')
+ylim([-5,5])
+% The red curve falls between the upper and lower boundary: The signal is
+% stationnary 
+
+%% EXAMPLE 3
+% White noise  - non stationnary (trend) - method 1
+% plot the reverse arrangement as a function of the sample size
+rng(1)
+myTrend =-0.003.*linspace(0,N,N);
+t = linspace(0,12,N); % time
+data = randn(1,N)+myTrend;
+
+
+% Let's have a look of the time serie generated.
+figure
+hold on;box on
+plot(t,data);
+plot(t,myTrend,'r'); % a significativ trend is visible
+legend('measured','trend')
+xlabel('time (months)');
+ylabel('popularity among girls')
+set(gcf,'color','w')
+%%
+clear Res A Ainf Asup
+jj=1;
+Ndata = 50:50:N;
+for ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,1);
+    jj=jj+1;
+end
+
+
+clf;close all
+figure
+plot(Ndata,A,'r',Ndata,Ainf,'kREPLACE_WITH_DASH_DASH',Ndata,Asup,'k:')
+xlabel('Number of data')
+ylabel('reverse arrangements');
+legend('Measured','lower boundary','upper boundary','location','NorthWest')
+set(gcf,'color','w')
+% The red curve falls outside the upper and lower boundary: The signal is
+% non-stationnary 
+
+%% EXAMPLE 4
+% White noise  - non stationnary (trend) - method 2
+% plot the reverse arrangement as a function of the sample size
+clear Res A Ainf Asup
+jj=1;
+for ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,2);
+    jj=jj+1;
+end
+figure
+plot(Ndata,A,'r',Ndata,Ainf,'kREPLACE_WITH_DASH_DASH',Ndata,Asup,'k:')
+xlabel('Number of data')
+ylabel('reverse arrangements');
+legend('Measured','lower boundary','upper boundary','location','NorthWest')
+ylim([-10,10])
+% The red curve falls outside the upper and lower boundary: The signal is
+% non-stationnary 
+
+%% EXAMPLE 5
+% White noise  - non stationnary (sinusoid) - method 1
+% plot the reverse arrangement as a function of the sample size
+
+% White noise  - non stationnary (trend) - method 1
+% plot the reverse arrangement as a function of the sample size
+rng(1)
+t = linspace(0,12,N); % time
+myAverage =sin(0.5.*t);
+data = randn(1,N)+myAverage;
+
+
+% Let's have a look of the time serie generated.
+figure
+hold on;box on
+plot(t,data);
+plot(t,myAverage,'r'); % a significativ trend is visible
+legend('measured','sinusoid')
+xlabel('time (s)');
+ylabel('popularity among girls')
+set(gcf,'color','w')
+%%
+% Reverse arrangement calculation
+clear Res A Ainf Asup
+jj=1;
+Ndata = 50:50:N;
+for ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,1);
+    jj=jj+1;
+end
+
+
+figure
+plot(Ndata,A,'r',Ndata,Ainf,'kREPLACE_WITH_DASH_DASH',Ndata,Asup,'k:')
+xlabel('Number of data')
+ylabel('reverse arrangements');
+legend('Measured','lower boundary','upper boundary','location','NorthWest')
+set(gcf,'color','w')
+% The red curve falls outside the upper and lower boundary: The signal is
+% non-stationnary 
+
+%% EXAMPLE 6
+% White noise  - non stationnary (step function) - method 2
+% plot the reverse arrangement as a function of the sample size
+
+% White noise  - non stationnary (trend) - method 1
+% plot the reverse arrangement as a function of the sample size
+rng(1)
+t = linspace(0,4,N); % time
+myStep =10.*[ones(1,round(2/4*N)),zeros(1,round(2/4*N))];
+data = 10+randn(1,N)+myStep;
+
+
+% Let's have a look of the time serie generated.
+figure
+hold on;box on
+plot(t,data);
+plot(t,10+myStep,'r'); % a significativ trend is visible
+legend('measured','step function')
+xlabel('rounds');
+ylabel('Ronda Roussey dignity')
+set(gcf,'color','w')
+%%
+% Reverse arrangement calculation
+clear Res A Ainf Asup
+jj=1;
+Ndata = 50:50:N;
+for ii=1:numel(Ndata),
+    dummy =  data(1:Ndata(ii));
+    [Res(jj),A(jj),Ainf(jj),Asup(jj)] = RA_test(dummy,2);
+    jj=jj+1;
+end
+
+figure
+plot(Ndata,A,'r',Ndata,Ainf,'kREPLACE_WITH_DASH_DASH',Ndata,Asup,'k:')
+xlabel('Number of data')
+ylabel('reverse arrangements');
+legend('Measured','lower boundary','upper boundary','location','NorthWest')
+set(gcf,'color','w')
+% The red curve falls outside the upper and lower boundary after the step function: The signal is
+% non-stationnary 
+ylim([-10,10])
+
+
+
+
+##### SOURCE END #####
+--></body></html>
