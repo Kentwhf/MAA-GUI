@@ -6,6 +6,8 @@ classdef Participant < handle
         ID   % subject ID
         sex  % sex as m/f for male and female, respectively
         size  % footwear size
+        height % subject height
+        weight % subject weight
     end
     
     events

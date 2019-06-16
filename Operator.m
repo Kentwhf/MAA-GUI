@@ -10,6 +10,9 @@ classdef Operator < handle
         resultsDown  % table of results for downhill
         timesVisitedAngles  % hashmap of angle-># times visited
         
+        % table of results for all trails (new)
+        results
+        
         uphillMAA  % holds uphill MAA
         downhillMAA  % holds downhill MAA
         
@@ -85,6 +88,12 @@ classdef Operator < handle
             operator.lastResultDownhill = '*';
             
             operator.tseriesplot = timeseries([], []);
+            
+            % new
+            operator.results = cell(16,10);
+            for i=1:16 
+               operator.results{i,1} = i-1;
+            end
         end
         
         %% Record results for the trial, uphill and downhill are 0/1
@@ -123,6 +132,7 @@ classdef Operator < handle
                fprintf('WARNING!!! Overwriting row:%d (angle %d), col:%d...\n', operator.currAngle + 1, operator.currAngle, col);
                result = 1;
             end
+            
             % put in the results, uphill and downhill share positions!
             if operator.foundUphill  
                 uphill = alreadyFound;
@@ -130,6 +140,7 @@ classdef Operator < handle
             if operator.foundDownhill
                 downhill = alreadyFound;
             end
+            
             fprintf('Putting %d into position (row:%d (angle %d), col:%d) for uphill...\n', uphill, operator.currAngle + 1, operator.currAngle, putHere);
             operator.resultsUp{operator.currAngle + 1, putHere} = uphill;
             operator.resultsUp{operator.currAngle + 1, putHere - 1} = operator.trialNum;
@@ -138,16 +149,89 @@ classdef Operator < handle
             operator.resultsDown{operator.currAngle + 1, putHere} = downhill;
             operator.resultsDown{operator.currAngle + 1, putHere - 1} = operator.trialNum;
             
+            % new 
+            disp(operator.results);
+            disp(operator.resultsDown)
+            disp(operator.resultsUp)
+            
+            trialCols = [2, 5, 8];
+            for col=trialCols
+                if isempty(operator.results{operator.currAngle + 1, col})
+                    operator.results{operator.currAngle + 1, col} = operator.trialNum;
+                    operator.results{operator.currAngle + 1, col + 1} = uphill;
+                    operator.results{operator.currAngle + 1, col + 2} = downhill;
+                    break;
+                end
+            end
+            
             result = result + 1;  % if 1, its ok! if 2 then we overwrote :(
             operator.trialNum = operator.trialNum + 1;
             
-            disp(operator.resultsUp);
-            disp(operator.resultsDown);
+%             disp(operator.resultsUp);
+%             disp(operator.resultsDown);
+%             disp(operator.results);
+            
+            
         end
         
         %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees
         function [upMAA, downMAA] = checkMAA(operator)
-            entryCols = [3, 5, 7];
+%             entryCols = [3, 5, 7];
+            upEntry = [3, 6, 9];
+            downEntry = [4, 7, 10];
+            
+%             % angleIndex - 1 == angle, go from indices 2, 3, 4,... 16 since we check angle (0, 1), (1, 2), ..., (14, 15)
+%             for angleIndex=2:operator.MAX_ANGLE+1  
+%                 numPassesPriorUp = 0;
+%                 numFailsHereUp = 0;
+%                 
+%                 numPassesPriorDown = 0;
+%                 numFailsHereDown = 0;
+%                 
+%                 % check to break
+%                 if (operator.foundUphill) && (operator.foundDownhill)
+%                     return
+%                 end
+%                 
+%                 % 2 passes before 2 fails for MAA, check each direction
+%                 for col=entryCols
+%                    % uphill
+%                    if operator.resultsUp{angleIndex - 1, col} == 1
+%                        numPassesPriorUp = numPassesPriorUp + 1;
+%                    end
+%                    if operator.resultsUp{angleIndex, col} == 0
+%                        numFailsHereUp = numFailsHereUp + 1;
+%                    end
+%                    % downhill
+%                    if operator.resultsDown{angleIndex - 1, col} == 1
+%                        numPassesPriorDown = numPassesPriorDown + 1;
+%                    end
+%                    if operator.resultsDown{angleIndex, col} == 0
+%                        numFailsHereDown = numFailsHereDown + 1;
+%                    end
+%                end
+%                
+%                % check if found uphill
+%                if (numPassesPriorUp >= 2) && (numFailsHereUp >= 2) && (~operator.foundUphill)
+%                    upMAA = angleIndex - 2;  % -1 for the index, -1 for the previous angle (2 fails)
+%                    operator.foundUphill = 1;
+%                    operator.uphillMAA = angleIndex - 2;
+%                    fprintf('FOUND UPHILL MAA at %d\n', operator.uphillMAA);
+%                else
+%                    upMAA = -1;
+%                end
+%                
+%                % check if found downhill
+%                if (numPassesPriorDown >= 2) && (numFailsHereDown >= 2) && (~operator.foundDownhill)
+%                    downMAA = angleIndex - 2;  % -1 for the index, -1 for the previous angle (2 fails)
+%                    operator.foundDownhill = 1;
+%                    operator.downhillMAA = angleIndex - 2;
+%                    fprintf('FOUND DOWNHILL MAA at %d\n', operator.downhillMAA);
+%                else
+%                    downMAA = -1;
+%                end
+%   
+%             end
             
             % angleIndex - 1 == angle, go from indices 2, 3, 4,... 16 since we check angle (0, 1), (1, 2), ..., (14, 15)
             for angleIndex=2:operator.MAX_ANGLE+1  
@@ -163,19 +247,22 @@ classdef Operator < handle
                 end
                 
                 % 2 passes before 2 fails for MAA, check each direction
-               for col=entryCols
+                for col=upEntry
                    % uphill
-                   if operator.resultsUp{angleIndex - 1, col} == 1
+                   if operator.results{angleIndex - 1, col} == 1
                        numPassesPriorUp = numPassesPriorUp + 1;
                    end
-                   if operator.resultsUp{angleIndex, col} == 0
+                   if operator.results{angleIndex, col} == 0
                        numFailsHereUp = numFailsHereUp + 1;
                    end
+                end
+                   
+               for col=downEntry
                    % downhill
-                   if operator.resultsDown{angleIndex - 1, col} == 1
+                   if operator.results{angleIndex - 1, col} == 1
                        numPassesPriorDown = numPassesPriorDown + 1;
                    end
-                   if operator.resultsDown{angleIndex, col} == 0
+                   if operator.results{angleIndex, col} == 0
                        numFailsHereDown = numFailsHereDown + 1;
                    end
                end
@@ -199,8 +286,9 @@ classdef Operator < handle
                else
                    downMAA = -1;
                end
-               
+  
             end
+            
         end
         
         %% Adjust the angle to set number - for TESTING PURPOSES ONLY (doesn't physically move the tipper though)
