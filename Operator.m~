@@ -117,7 +117,6 @@ classdef Operator < handle
                     break;
                 end
             end
-            
             if putHere == 0
                putHere = 7;
                fprintf('WARNING!!! Overwriting row:%d (angle %d), col:%d...\n', operator.currAngle + 1, operator.currAngle, col);
@@ -142,7 +141,6 @@ classdef Operator < handle
             operator.trialNum = operator.trialNum + 1;
             
             disp(operator.resultsUp);
-            disp(operator.resultsDown);
         end
         
         %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees
