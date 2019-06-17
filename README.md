@@ -1,1 +1,1 @@
-# MAA_GUI
+# MAA-GUI
