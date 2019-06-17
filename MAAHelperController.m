@@ -178,6 +178,7 @@ handles.operator.recordResults(handles.resultUphill, handles.resultDownhill);
 handles.operator.checkMAA(); 
 
 % decide next angle:
+% implement an if statement to execute this line 
 handles.operator.adjustAngle(handles.resultUphill, handles.resultDownhill);
 
 fprintf('    NEXT ANGLE: %d\n', handles.operator.currAngle);

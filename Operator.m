@@ -586,6 +586,7 @@ classdef Operator < handle
             end
         end
         
+        
         %% Helper - checkAngleFullBoth -> return >0 if the angle should be skipped, checks both directions
         % isFull == 1 means 3 trials, 2 passes for both
         % isFull == 2 means 3 trials, 2 fails for up, 2 passes for down
