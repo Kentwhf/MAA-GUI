@@ -234,7 +234,8 @@ classdef Operator < handle
 %             end
             
             % angleIndex - 1 == angle, go from indices 2, 3, 4,... 16 since we check angle (0, 1), (1, 2), ..., (14, 15)
-            for angleIndex=2:operator.MAX_ANGLE+1  
+            % new. might not need (14,15) since a participant can ace the test 
+            for angleIndex=2:operator.MAX_ANGLE 
                 numPassesPriorUp = 0;
                 numFailsHereUp = 0;
                 
