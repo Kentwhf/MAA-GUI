@@ -49,7 +49,7 @@ ROW_HEADINGS = {'REB#'	'test'	'id'	'sub#'	'brand'	'name'	'Style#'	'iDAPT#'...
     'MATLAB AIR TEMP'	'MATLAB ICE TEMP'	'time order'};
 
 
-TOP_LEVEL_DIR = 'K:\winterlab\footwear database\Tipper Operator\MAA Data';
+TOP_LEVEL_DIR = 'J:\winterlab\footwear database\Tipper Operator\MAA Data\2019-04-10';
 topLevelFolder = uigetdir(TOP_LEVEL_DIR);  % choose the date folder
 if topLevelFolder == 0
     fprintf('Cancelled\n');
@@ -77,7 +77,7 @@ else
 end
 
 % FOOTWEAR LIST SHEET - SOMETIMES CHANGES!!!
-FOOTWEAR_LIST_PATH = 'J:\winterlab\footwear database\Master list of footwear updated 20190521.xlsx';
+FOOTWEAR_LIST_PATH = 'J:\winterlab\footwear database\temp';
 
 % FOOTWEAR SHEET NUMBER TO READ (read the first sheet)
 FOOTWEAR_SHEET_INDEX = 1;
