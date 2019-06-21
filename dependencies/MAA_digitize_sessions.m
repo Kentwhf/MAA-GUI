@@ -57,8 +57,9 @@ if topLevelFolder == 0
 end
 
 % Make the file for this digitized file if it doesn't exist already (which it probably wont lol)
-EXPORTED_DATA_PATH = 'K:\winterlab\footwear database\Tipper Operator\AutomatedDigitizing\AutomatedDigitizedResults.xlsx';
-EXPORTED_SHEET = sprintf('%s_%s', datetime('today'), datestr(now, 'HH-MM PM'));
+EXPORTED_DATA_PATH = 'J:\winterlab\footwear database\Tipper Operator\AutomatedDigitizing\AutomatedDigitizedResults.xlsx';
+% Change the datetime everytime as sprintf not defined for datetime()
+EXPORTED_SHEET = sprintf('%s_%s', '21-Jun-2019', datestr(now, 'HH-MM PM'));
 if ~exist(EXPORTED_DATA_PATH, 'file')
     fprintf('ALERT! FILE DOES NOT EXIST! MAKING IT NOW...\n');
     xlswrite(EXPORTED_DATA_PATH, ROW_HEADINGS, EXPORTED_SHEET);
@@ -76,7 +77,7 @@ else
 end
 
 % FOOTWEAR LIST SHEET - SOMETIMES CHANGES!!!
-FOOTWEAR_LIST_PATH = 'K:\winterlab\footwear database\Master list of footwear updated 20190521.xlsx';
+FOOTWEAR_LIST_PATH = 'J:\winterlab\footwear database\Master list of footwear updated 20190521.xlsx';
 
 % FOOTWEAR SHEET NUMBER TO READ (read the first sheet)
 FOOTWEAR_SHEET_INDEX = 1;
