@@ -234,8 +234,13 @@ classdef Operator < handle
 %             end
             
             % angleIndex - 1 == angle, go from indices 2, 3, 4,... 16 since we check angle (0, 1), (1, 2), ..., (14, 15)
+<<<<<<< HEAD
             % Need to make an edge case for degree 15 when passing all
             for angleIndex=2:operator.MAX_ANGLE+1  
+=======
+            % new. might not need (14,15) since a participant can ace the test 
+            for angleIndex=2:operator.MAX_ANGLE 
+>>>>>>> 31bc320eae9360ca0e56c513d17b061aae73e9e1
                 numPassesPriorUp = 0;
                 numFailsHereUp = 0;
                 
@@ -587,6 +592,7 @@ classdef Operator < handle
             end
         end
             
+        
         
         %% Helper - checkAngleFullBoth -> return >0 if the angle should be skipped, checks both directions
         % isFull == 1 means 3 trials, 2 passes for both

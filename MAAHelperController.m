@@ -178,6 +178,7 @@ handles.operator.recordResults(handles.resultUphill, handles.resultDownhill);
 handles.operator.checkMAA(); 
 
 % decide next angle:
+% implement an if statement to execute this line 
 handles.operator.adjustAngle(handles.resultUphill, handles.resultDownhill);
 
 fprintf('    NEXT ANGLE: %d\n', handles.operator.currAngle);
@@ -699,7 +700,6 @@ function observerEdit_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of observerEdit as text
 %        str2double(get(hObject,'String')) returns contents of observerEdit as a double
 
-
 % --- Executes during object creation, after setting all properties.
 function observerEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to observerEdit (see GCBO)
@@ -741,46 +741,46 @@ handles.operator.session.setObserver(get(handles.observerEdit, 'String'));
 % notify the viewer
 handles.operator.session.notifyListeners();
 
-
-
 % --- Executes on button press in ExportButton.
 function ExportButton_Callback(hObject, eventdata, handles)
 % hObject    handle to ExportButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% fprintf('Exporting to excel...\n');
-fprintf('NOT IMPLEMENTED YET\n');
-% Excel = actxserver ('Excel.Application');
-% 
-% % Set preferred excel parameters - no sound, complaints, and visible
-% Excel.visible = true;
-% Excel.DisplayAlerts = false;
-% Excel.EnableSound = false;
-% 
-% if ~exist(SPREADSHEET_SESSION, 'file')
-%     fprintf('Output file doesnt exist, making it now lol...\n');
-%     f = fopen(SPREADSHEET_SESSION, 'w');
-%     fclose(f);
-% end
-% Excel.Workbooks.Open(SPREADSHEET_SESSION);
-% Workbook = Excel.ActiveWorkbook;
-% Worksheets = Workbook.sheets;
-% Worksheets.Item(1).Activate;
-% xlswrite1(SPREADSHEET_SESSION, excelWriteCells);
-% 
-% % spreadsheet with all our data
-%SPREADSHEET_SESSION = 'P:\Projects\WinterLab\gui\exported_session.xlsx'; %'K:\winterlab\footwear database\Tipper Operator.exported_session.xlsx';
-% % write to the file
-%excelWriteCells = handles.operator.exportDataCells;
+fprintf('Exporting to excel...\n');
+% fprintf('NOT IMPLEMENTED YET\n');
+Excel = actxserver ('Excel.Application');
+
+% Set preferred excel parameters - no sound, complaints, and visible
+Excel.visible = true;
+Excel.DisplayAlerts = false;
+Excel.EnableSound = false;
+
+if ~exist(SPREADSHEET_SESSION, 'file')
+    fprintf('Output file doesnt exist, making it now lol...\n');
+    f = fopen(SPREADSHEET_SESSION, 'w');
+    fclose(f);
+end
+Excel.Workbooks.Open(SPREADSHEET_SESSION);
+Workbook = Excel.ActiveWorkbook;
+Worksheets = Workbook.sheets;
+Worksheets.Item(1).Activate;
+xlswrite1(SPREADSHEET_SESSION, excelWriteCells);
+
+% spreadsheet with all our data
+SPREADSHEET_SESSION = 'U:\Projects\Winter Projects\Kent\GUI\MAA-GUI\exported_session_2.xlsx'; 
+%'K:\winterlab\footwear database\Tipper Operator.exported_session.xlsx';
+
+% write to the file
+excelWriteCells = handles.operator.exportDataCells;
 
 
-%xlswrite(SPREADSHEET_SESSION, excelWriteCells, 'SessionData', 'A2:AE2');
+xlswrite(SPREADSHEET_SESSION, excelWriteCells, 'SessionData', 'A2:AE2');
 
-% % Save our changes to file
-% invoke(Excel.ActiveWorkbook,'Save'); 
-% Workbook.Close(false);
-% 
-% % Safely close the ActiveX server
-% Excel.Quit;
-% Excel.delete;
-% clear Excel;
+% Save our changes to file
+invoke(Excel.ActiveWorkbook,'Save'); 
+Workbook.Close(false);
+
+% Safely close the ActiveX server
+Excel.Quit;
+Excel.delete;
+clear Excel;
