@@ -234,6 +234,7 @@ classdef Operator < handle
 %             end
             
             % angleIndex - 1 == angle, go from indices 2, 3, 4,... 16 since we check angle (0, 1), (1, 2), ..., (14, 15)
+            % Need to make an edge case for degree 15 when passing all
             for angleIndex=2:operator.MAX_ANGLE+1  
                 numPassesPriorUp = 0;
                 numFailsHereUp = 0;
@@ -308,7 +309,7 @@ classdef Operator < handle
         
         %% Adjust the angle based on the trial results, return the new angle
         function adjustAngle(operator, uphill, downhill)
-            % --- dont have either MAA yet
+            % --- dont have either MAA yet           
             if ~operator.foundUphill && ~operator.foundDownhill
                 % either 1 or both slip - should go down or stay
                 if uphill == 0 || downhill == 0
@@ -423,7 +424,7 @@ classdef Operator < handle
                                operator.foundDownhill = 1;
                                fprintf('Visited angle 15 3 times with no fails, MAAs are 15!\n');
                                return
-                             % else, repeat 15
+                            % else, repeat 15
                             else
                                 fprintf('Staying at angle 15 for another trial...\n');
                                 return
@@ -585,6 +586,7 @@ classdef Operator < handle
                 end
             end
         end
+            
         
         %% Helper - checkAngleFullBoth -> return >0 if the angle should be skipped, checks both directions
         % isFull == 1 means 3 trials, 2 passes for both
