@@ -176,6 +176,7 @@ handles.justTestedAngle = handles.operator.currAngle;
 
 handles.operator.recordResults(handles.resultUphill, handles.resultDownhill);
 handles.operator.checkMAA(); 
+handles.operator.checkFirstSlipAngle();
 
 % decide next angle:
 % implement an if statement to execute this line 
