@@ -692,6 +692,9 @@ classdef Operator < handle
         
         %% Iterate over to find next angle 
         function result = nextAngleHellper (operator, direction, angle, inequalitySign)
+            fileNumCols = [2, 5, 8];
+            % Bounded below <= and UP
+            if strcmp(inequalitySign, '<=')
         end
         
         %% Helper - checkFirstSlipAngle -> return the angle where the first slip happens
