@@ -617,15 +617,17 @@ classdef Operator < handle
                     if operator.results{angle + 1, file} && operator.results{angle + 1, file + 1} == 0
                         counter1 = operator.results{angle + 1, file + 1};
                     end
-                    if operator.results{angle + 2, file} && operator.results{angle + 2, file + 1} == 0
-                        counter2 = operator.results{angle + 2, file + 1};    
-                    end
-                    if counter1 >= 2 || counter2 >= 2
+%                     if operator.results{angle + 2, file} && operator.results{angle + 2, file + 1} == 0
+%                         counter2 = operator.results{angle + 2, file + 1};    
+%                     end
+%                     if counter1 >= 2 || counter2 >= 2
+                    if counter1 >= 2
                         result = 1;
                         return
                     end
                 end
             end
+
             % Bounded below <= and DOWN  
             if strcmp(inequalitySign, '<=') && direction == Opeator.DOWN
                 if angle == 15
@@ -636,10 +638,11 @@ classdef Operator < handle
                     if operator.results{angle + 1, file} && operator.results{angle + 1, file + 2} == 0
                         counter1 = operator.results{angle + 1, file + 2};
                     end
-                    if operator.results{angle + 2, file} && operator.results{angle + 2, file + 2} == 0
-                        counter2 = operator.results{angle + 2, file + 2};    
-                    end
-                    if counter1 >= 2 || counter2 >= 2
+%                     if operator.results{angle + 2, file} && operator.results{angle + 2, file + 2} == 0
+%                         counter2 = operator.results{angle + 2, file + 2};    
+%                     end
+%                     if counter1 >= 2 || counter2 >= 2
+                    if counter1 >= 2
                         result = 1;
                         return
                     end
@@ -655,10 +658,11 @@ classdef Operator < handle
                     if operator.results{angle + 1, file} && operator.results{angle + 1, file + 1} == 1
                         counter1 = operator.results{angle + 1, file + 1};
                     end
-                    if operator.results{angle, file} && operator.results{angle, file + 1} == 1
-                        counter2 = operator.results{angle, file + 1};    
-                    end
-                    if counter1 >= 2 || counter2 >= 2
+%                     if operator.results{angle, file} && operator.results{angle, file + 1} == 1
+%                         counter2 = operator.results{angle, file + 1};    
+%                     end
+%                     if counter1 >= 2 || counter2 >= 2
+                    if counter1 >= 2
                         result = 1;
                         return
                     end
@@ -674,10 +678,11 @@ classdef Operator < handle
                     if operator.results{angle + 1, file} && operator.results{angle + 1, file + 2} == 1
                         counter1 = operator.results{angle + 1, file + 2};
                     end
-                    if operator.results{angle, file} && operator.results{angle, file + 2} == 1
-                        counter2 = operator.results{angle, file + 2};    
-                    end
-                    if counter1 >= 2 || counter2 >= 2
+%                     if operator.results{angle, file} && operator.results{angle, file + 2} == 1
+%                         counter2 = operator.results{angle, file + 2};    
+%                     end
+%                     if counter1 >= 2 || counter2 >= 2
+                    if counter1 >= 2
                         result = 1;
                         return
                     end
