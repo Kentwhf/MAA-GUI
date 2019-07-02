@@ -587,19 +587,70 @@ classdef Operator < handle
         function adjustAngle(operator, uphill, downhill)
             if uphill == 0 || downhill == 0
                 % Case 1: (0,0)
+                if (uphill == 0 && downhill == 0)
+                   if ~(operator.bounded("UP",">=",operator.currAngle - 1) && operator.bounded("DOWN",">=",operator.currAngle - 1))
+                         operator.currAngle = operator.nextAngleHellper(operator.currAngle, ">=");
+                    end
+                end
                 % Case 2: (0,1)
+                if (uphill == 0 && downhill == 1)
+                    if operator.downhillfound
+                        uphillBoundedAngle = operator.searchBoundedAboveAngle('UP');
+                        operator.nextAngleHellper(uphillBoundedAngle + 1, '>=');
+                    elseif operator.uphillfound
+                        downhillBoundedAngle = operator.searchBoundedAboveAngle('DOWN');
+                        operator.nextAngleHellper(downhillBoundedAngle + 1, '>=');
+                    else
+                        if operator.bounded('UP', opeartor.currAngle + 1, '>=') && operator.bounded('DOWN', opeartor.currAngle + 1, '>=')
+                            operator.nextAngleHellper(opeartor.currAngle, '>=');
+                        else
+                             operator.nextAngleHellper(opeartor.currAngle - 1, '<=');
+                        end
+                    end
+                end
                 % Case 3: (1,0)
-                % Case 4: (0,*)
-                % Case 5: (*,0)
+                if (uphill == 1 && downhill == 0)
+                    if operator.uphillfound
+                        downhillBoundedAngle = operator.searchBoundedAboveAngle('DOWN');
+                        operator.nextAngleHellper(downhillBoundedAngle + 1, '>=');
+                    elseif operator.downhillfound
+                        uphillBoundedAngle = operator.searchBoundedAboveAngle('UP');
+                        operator.nextAngleHellper(uphillBoundedAngle + 1, '>=');
+                    else
+                        if operator.bounded('UP', opeartor.currAngle + 1, '>=') && operator.bounded('DOWN', opeartor.currAngle + 1, '>=')
+                            operator.nextAngleHellper(opeartor.currAngle, '>=');
+                        else
+                             operator.nextAngleHellper(opeartor.currAngle - 1, '<=');
+                        end
+                    end
+                end
+                % Case 4: (*,0)
+                if (uphill == '*' && downhill == 0)
+                   if ~(operator.bounded("DOWN",">=",operator.currAngle - 1))
+                         operator.currAngle = operator.nextAngleHellper(operator.currAngle - 1, "<=");
+                    end
+                end
+                % Case 5: (0,*)
+                if (uphill == 0 && downhill == '*')
+                   if ~(operator.bounded("UP",">=",operator.currAngle - 1))
+                         operator.currAngle = operator.nextAngleHellper(operator.currAngle - 1, "<=");
+                    end
+                end
             else
-                % Case 6: (1,*)
-                if (uphill == 1 && downhill == '*') 
+                % Case 6: (1,*) && % Case 7: (*,1)
+                if (uphill == 1 && downhill == '*') || (uphill == '*' && downhill == 1)
+                    if operator.bounded("UP","<=",operator.currAngle + 1) && operator.bounded("UP","<=",operator.currAngle + 1)
+                         operator.currAngle = operator.nextAngleHellper(operator.currAngle + 1, ">=");
+                    end
                 end
-                % Case 7: (*,1)
-                if (uphill == '*' && downhill == 1)
+                % Case 7: (1,1)
+                if (uphill == 1 && downhill == 1)
+                    if operator.firstSlip
+                        if ~(operator.bounded("UP","<=",operator.currAngle + 1) && operator.bounded("DOWN","<=",operator.currAngle + 1))
+                            operator.currAngle = operator.nextAngleHellper(operator.currAngle + 1, ">=");
+                        end
+                    end
                 end
-                % Case 8: (1,1)
-                
             end
         end
         
@@ -691,10 +742,30 @@ classdef Operator < handle
         end
         
         %% Iterate over to find next angle 
-        function result = nextAngleHellper (operator, direction, angle, inequalitySign)
+        function result = nextAngleHellper (operator, angle, inequalitySign)
             fileNumCols = [2, 5, 8];
-            % Bounded below <= and UP
+            % find less than or equal to <=
             if strcmp(inequalitySign, '<=')
+                for i = angle:-1:1
+                    for file = fileNumCols
+                        if isempty(operator.results{i, file})
+                            result = i-1; 
+                            break
+                        end
+                    end
+                end
+            end
+            % find greater than or equal to >=
+            if strcmp(inequalitySign, '>=')
+                for i = angle:-1:1
+                    for file = fileNumCols
+                        if isempty(operator.results{i, file})
+                            result = i-1; 
+                            break
+                        end
+                    end
+                end
+            end
         end
         
         %% Helper - checkFirstSlipAngle -> return the angle where the first slip happens
@@ -724,13 +795,48 @@ classdef Operator < handle
             end
         end   
         
-        %% Helper - checkAngleFullBoth -> return > 0 if the angle should be skipped, checks both directions
+        %% Helper - searchBoundedAboveAngle -> find greatest angle that has two 1s
+        
+        function result = searchBoundedAboveAngle(operator, direction)
+            fileNumCols = [2, 5, 8];
+            if strcomp(direction, 'UP')
+                for i = 1:-1:16
+                    counter = 0;
+                    for file = fileNumCols
+                        if operator.results{i+1,file + 1} == 1
+                            counter = counter + 1; 
+                            if counter >= 2
+                                result = i-1;
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+            if strcomp(direction, 'DOWN')
+                for i = 1:-1:16
+                    counter = 0;
+                    for file = fileNumCols
+                        if operator.results{i+1,file + 2} == 1
+                            counter = counter + 1; 
+                            if counter >= 2
+                                result = i-1;
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+        end
+            
+        %% checkAngleFullBoth -> return > 0 if the angle should be skipped, checks both directions
         % isFull == 1 means 3 trials, 2 passes for both
         % isFull == 2 means 3 trials, 2 fails for up, 2 passes for down
         % isFull == 3 means 3 trials, 2 fails for down, 2 passes for up
         % isFull == 4 means 2 trials, but both pass
         % isFull == 0 means less than 3 trials
         % IF isFull > 0, it is FULL!
+        
         function isFull = checkAngleFullBoth(operator, angle)
             isFull = -1;
             % check if full - 3 trials
