@@ -60,7 +60,7 @@ end
 EXPORTED_DATA_PATH = 'K:\winterlab\footwear database\Tipper Operator\AutomatedDigitizing\AutomatedDigitizedResults.xlsx';
 
 % Change the datetime everytime, as sprintf() not defined for datetime()
-EXPORTED_SHEET = sprintf('%s_%s', '21-Jun-2019', datestr(now, 'HH-MM PM'));
+EXPORTED_SHEET = sprintf('%s_%s', datestr(now, date), datestr(now, 'HH-MM PM'));
 if ~exist(EXPORTED_DATA_PATH, 'file')
     fprintf('ALERT! FILE DOES NOT EXIST! MAKING IT NOW...\n');
     xlswrite(EXPORTED_DATA_PATH, ROW_HEADINGS, EXPORTED_SHEET);
