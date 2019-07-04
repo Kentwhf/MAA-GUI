@@ -49,7 +49,7 @@ ROW_HEADINGS = {'REB#'	'test'	'id'	'sub#'	'brand'	'name'	'Style#'	'iDAPT#'...
     'MATLAB AIR TEMP'	'MATLAB ICE TEMP'	'time order'};
 
 
-TOP_LEVEL_DIR = 'K:\winterlab\footwear database\Tipper Operator\MAA Data\2019-04-10';
+TOP_LEVEL_DIR = 'J:\winterlab\footwear database\Tipper Operator\MAA Data\';
 topLevelFolder = uigetdir(TOP_LEVEL_DIR);  % choose the date folder
 if topLevelFolder == 0
     fprintf('Cancelled\n');
@@ -57,7 +57,7 @@ if topLevelFolder == 0
 end
 
 % Make the file for this digitized file if it doesn't exist already (which it probably wont lol)
-EXPORTED_DATA_PATH = 'K:\winterlab\footwear database\Tipper Operator\AutomatedDigitizing\AutomatedDigitizedResults.xlsx';
+EXPORTED_DATA_PATH = 'J:\winterlab\footwear database\Tipper Operator\AutomatedDigitizing\AutomatedDigitizedResults.xlsx';
 
 % Change the datetime everytime, as sprintf() not defined for datetime()
 EXPORTED_SHEET = sprintf('%s_%s', datestr(now, date), datestr(now, 'HH-MM PM'));
@@ -78,7 +78,7 @@ else
 end
 
 % FOOTWEAR LIST SHEET - SOMETIMES CHANGES!!!
-FOOTWEAR_LIST_PATH = 'K:\winterlab\footwear database\Master list of footwear updated 20190521 - Copy.xlsx';
+FOOTWEAR_LIST_PATH = 'I:\winterlab\footwear database\Master list of footwear updated 20190626.xlsx';
 
 % FOOTWEAR SHEET NUMBER TO READ (read the first sheet)
 FOOTWEAR_SHEET_INDEX = 1;
