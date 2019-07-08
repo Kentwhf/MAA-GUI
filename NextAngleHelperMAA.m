@@ -5,7 +5,6 @@ clear all
 close all
 clc
 
-
 % test test 123
 fprintf('-------------TEST CASE 1----------------\n');
 participant = Participant('sub100', 'm', 8);

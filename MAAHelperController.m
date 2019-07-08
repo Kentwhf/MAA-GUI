@@ -271,8 +271,6 @@ function participantID_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of participantID as text
 %        str2double(get(hObject,'String')) returns contents of participantID as a double
 
-
-
 function partiSizeEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to partiSizeEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
