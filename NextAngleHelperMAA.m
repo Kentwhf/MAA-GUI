@@ -151,5 +151,6 @@ assert(obtainedUp == expectedUp, 'FAILED: obtained up MAA did not match expected
 assert(obtainedDown == expectedDown, 'FAILED: obtained down MAA did not match expected!');
 
 fprintf('============================================\n\n');
+disp('congrats')
 
 

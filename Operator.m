@@ -172,59 +172,6 @@ classdef Operator < handle
 
             upEntry = [3, 6, 9];
             downEntry = [4, 7, 10];
-%             entryCols = [3, 5, 7];            
-%             % angleIndex - 1 == angle, go from indices 2, 3, 4,... 16 since we check angle (0, 1), (1, 2), ..., (14, 15)
-%             for angleIndex=2:operator.MAX_ANGLE+1  
-%                 numPassesPriorUp = 0;
-%                 numFailsHereUp = 0;
-%                 
-%                 numPassesPriorDown = 0;
-%                 numFailsHereDown = 0;
-%                 
-%                 % check to break
-%                 if (operator.foundUphill) && (operator.foundDownhill)
-%                     return
-%                 end
-%                 
-%                 % 2 passes before 2 fails for MAA, check each direction
-%                 for col=entryCols
-%                    % uphill
-%                    if operator.resultsUp{angleIndex - 1, col} == 1
-%                        numPassesPriorUp = numPassesPriorUp + 1;
-%                    end
-%                    if operator.resultsUp{angleIndex, col} == 0
-%                        numFailsHereUp = numFailsHereUp + 1;
-%                    end
-%                    % downhill
-%                    if operator.resultsDown{angleIndex - 1, col} == 1
-%                        numPassesPriorDown = numPassesPriorDown + 1;
-%                    end
-%                    if operator.resultsDown{angleIndex, col} == 0
-%                        numFailsHereDown = numFailsHereDown + 1;
-%                    end
-%                end
-%                
-%                % check if found uphill
-%                if (numPassesPriorUp >= 2) && (numFailsHereUp >= 2) && (~operator.foundUphill)
-%                    upMAA = angleIndex - 2;  % -1 for the index, -1 for the previous angle (2 fails)
-%                    operator.foundUphill = 1;
-%                    operator.uphillMAA = angleIndex - 2;
-%                    fprintf('FOUND UPHILL MAA at %d\n', operator.uphillMAA);
-%                else
-%                    upMAA = -1;
-%                end
-%                
-%                % check if found downhill
-%                if (numPassesPriorDown >= 2) && (numFailsHereDown >= 2) && (~operator.foundDownhill)
-%                    downMAA = angleIndex - 2;  % -1 for the index, -1 for the previous angle (2 fails)
-%                    operator.foundDownhill = 1;
-%                    operator.downhillMAA = angleIndex - 2;
-%                    fprintf('FOUND DOWNHILL MAA at %d\n', operator.downhillMAA);
-%                else
-%                    downMAA = -1;
-%                end
-%   
-%             end
             
             % angleIndex - 1 == angle, go from indices 2, 3, 4,... 16 since we check angle (0, 1), (1, 2), ..., (14, 15)
             % Need to make an edge case for degree 15 when passing all
@@ -321,14 +268,14 @@ classdef Operator < handle
                 end
             end
             
-            if numPassesUp >= 2 || numFailsUp >= 2
-                operator.foundUphill = 1;
-                operator.uphillMAA = operator.currAngle; 
-            end
-            if numPassesDown >= 2 || numFailsDown >= 2
-                operator.foundDownhill = 1;
-                operator.downhillMAA = operator.currAngle; 
-            end
+%             if numPassesUp >= 2 || numFailsUp >= 2
+%                 operator.foundUphill = 1;
+%                 operator.uphillMAA = operator.currAngle; 
+%             end
+%             if numPassesDown >= 2 || numFailsDown >= 2
+%                 operator.foundDownhill = 1;
+%                 operator.downhillMAA = operator.currAngle; 
+%             end
            
         end
         
@@ -346,289 +293,11 @@ classdef Operator < handle
                 operator.lastResultDownhill = downhill;
             end
         end
-        
-%         %% Adjust the angle based on the trial results, return the new angle
-%         function adjustAngle(operator, uphill, downhill)
-%             % --- dont have either MAA yet           
-%             if ~operator.foundUphill && ~operator.foundDownhill
-%                 % either 1 or both slip - should go down or stay
-%                 if uphill == 0 || downhill == 0
-%                     % record first slip angle if not already(bidirectional)
-%                     if operator.firstSlip == 0
-%                         operator.firstSlipAngle = operator.currAngle;
-%                     end
-%                     operator.firstSlip = 1;  % set first slip to true
-%                     
-%                     % IMPOSSIBLE CASE:
-%                     % isFull > 0 and full here, since that would imply we have an MAA that we didn't see
-%                     % due to the way of how we visit angles 
-%                     
-%                     % regular cases where we are above 0 degrees
-%                     if operator.currAngle - operator.INCREMENT >= operator.MIN_ANGLE
-%                         timesVisited = operator.checkAngleFullBoth(operator.currAngle - operator.INCREMENT);
-% 
-%                         % Case 1: angle - 1 is full so test here again
-%                         if timesVisited > 0 && operator.checkAngleFullBoth(operator.currAngle) <= 0
-%                             fprintf('Moving to angle %d...\n', operator.currAngle);
-%                             return
-% 
-%                         % Case 2: angle - 1 isn't full, so we go down
-%                         else
-%                             operator.currAngle = operator.currAngle - operator.INCREMENT;
-%                             fprintf('Moving to angle %d...\n', operator.currAngle);
-%                             return
-%                         end
-%                         
-%                     % we are at 0 degrees, test here again
-%                     else
-%                         % check if we are full with 2 fails
-%                         timesVisited = operator.timesVisitedAngles(operator.currAngle);
-%                             
-%                         % Case 1: we are full (3 trials), set downhill MAA
-%                         % to 0 regardless (due to lack of info from 2 passes below/2 fails above
-%                         % or 2 fails here/unknown 'below')
-%                         if timesVisited >= 3
-%                             fprintf('we are full at 0 degrees\n');
-%                             
-%                             operator.uphillMAA = 0;
-%                             operator.foundUphill = 1;
-%                             operator.currAngle = operator.MIN_ANGLE + 1;
-%                             
-%                             operator.downhillMAA = 0;
-%                             operator.foundDownhill = 1;
-%                             operator.currAngle = operator.MIN_ANGLE + 1;
-%                             fprintf('3 trials at 0, force terminate\n');
-%                             
-%                         end
-%                         return
-%                     end
-%                 % both pass - go up
-%                 else  
-%                     % no slips yet, no need to check if angle + 2 is full
-%                     % since it would be the first time we visit it...
-%                     if ~operator.firstSlip
-%                         if operator.currAngle + operator.INITIAL_INCREMENT > operator.MAX_ANGLE
-%                             fprintf('+2 is too much, trying to add +1 instead...\n');
-%                             if operator.currAngle + operator.INCREMENT <= operator.MAX_ANGLE
-%                                 fprintf('Adding +1 is okay!\n');
-%                                 operator.currAngle = operator.currAngle + operator.INCREMENT;
-%                             else
-%                                 fprintf('Staying at angle 15...\n');
-%                             end
-%                         else
-%                             operator.currAngle = operator.currAngle + operator.INITIAL_INCREMENT; 
-%                         end
-%                         % if the boot is really good and makes it to 15
-%                         % degrees without failing AND passes 2 times
-%                         % here, then we set both MAAs as 15. 
-%                         if operator.checkAngleFullBoth(operator.MAX_ANGLE) > 0
-%                            operator.uphillMAA = operator.MAX_ANGLE;
-%                            operator.downhillMAA = operator.MAX_ANGLE;
-%                            operator.foundUphill = 1;
-%                            operator.foundDownhill = 1;
-%                            fprintf('Visited angle 15 3 times with no fails, MAAs are 15!\n');
-%                         end
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         
-%                         return
-%                         
-%                     % both pass and already slipped once
-%                     else
-%                         if operator.currAngle + operator.INCREMENT <= operator.MAX_ANGLE
-%                             timesVisited = operator.checkAngleFullBoth(operator.currAngle + operator.INCREMENT);
-% 
-%                             % Case 1: angle + 1 is full
-%                             if timesVisited > 1
-%                                 % go to angle + 2, check there again recursively
-%                                 operator.currAngle = operator.currAngle + operator.INCREMENT + 1;
-%                                 fprintf('Moving to angle %d... angle + 1 is full so we going angle + 2!\n', operator.currAngle);
-% 
-%                                 operator.adjustAngle(uphill, downhill);
-%                             % Case 2: angle + 1 isn't full
-%                             else
-%                                 operator.currAngle = operator.currAngle + operator.INCREMENT;
-%                                 fprintf('Moving to angle %d...\n', operator.currAngle);
-% 
-%                                 return
-%                             end
-%                             
-%                         % both dirs passed but are already at 15    
-%                         elseif operator.currAngle == operator.MAX_ANGLE
-%                             % if we visited this angle 3 times, that means
-%                             % we have 2 passed for both angles at MAX-1, so
-%                             % we set MAAs to 15
-%                             if operator.timesVisitedAngles(operator.currAngle) == 3
-%                                operator.uphillMAA = operator.MAX_ANGLE;
-%                                operator.downhillMAA = operator.MAX_ANGLE;
-%                                operator.foundUphill = 1;
-%                                operator.foundDownhill = 1;
-%                                fprintf('Visited angle 15 3 times with no fails, MAAs are 15!\n');
-%                                return
-%                             % else, repeat 15
-%                             else
-%                                 fprintf('Staying at angle 15 for another trial...\n');
-%                                 return
-%                             end
-%                            
-%                         end
-%                     end
-%                 end
-%             
-%             % --- we didn't find uphill MAA yet, but already have downhill
-%             elseif ~operator.foundUphill && operator.foundDownhill  % ignore downhill
-%                 if uphill == 0
-%                     timesVisited = operator.checkAngleFullDir(operator.currAngle - 1, operator.UP);
-%                     % IMPOSSIBLE CASES - enforced by constraints or loop invariant 
-%                     % isFull == 1 since cannot currently be lower than a full angle with 2 passes
-%                     % isFull == 2 and full here with 2 fails since cannot visit the same angle 3 times and fail >2/3 at adjacent angles
-%                     % isFull == 2 and full here with 2 passes since that would imply we found MAA, so we should've terminated
-% 
-%                     % Case 1: angle - 1 uphill is full with 2 fails, here is not
-%                     % full and failed, test here again in case pass
-%                     if (timesVisited == 2 && operator.checkAngleFullDir(operator.currAngle, operator.UP) <= 0) || timesVisited == 3
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         return
-%   
-%                     % Case 2/default: uphill at angle - 1 isn't full
-%                     else
-%                         operator.currAngle = operator.currAngle - operator.INCREMENT;
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         return
-%                     end
-%                     
-%                 else  % uphill == 1
-%                     timesVisited = operator.checkAngleFullDir(operator.currAngle + 1, operator.UP);
-%                     fprintf('Looking for next angle for uphill only...\n');
-%                     % IMPOSSIBLE CASES - enforced by constraints or loop invariant
-%                     % isFull == 1 since cannot currently be lower than a
-%                     % full angle with 2 passes  **this is a weird exception
-%                     % since it could 1 0 and 1 0 for uphill/downhill...
-%                     % isFull == 2 and full here with 2 fails since cannot visit the same angle 3 times and fail >2/3 at adjacent angles
-%                     % isFull == 2 and full here with 2 passes since that would imply an MAA found at this angle so the loop would terminate!
-%                     
-%                     
-%                     % Case 1: if uphill's angle + 1 is full with 2 fails and here
-%                     % isn't full, test here again
-%                     if timesVisited == 2 && operator.checkAngleFullDir(operator.currAngle, operator.UP) <= 0
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         
-%                         return
-%                         
-%                     % Case 2: if uphill has 2 passes at angle+1, go to angle + 2    
-%                     elseif timesVisited == 1 || timesVisited == 3
-%                         operator.currAngle = operator.currAngle + operator.INCREMENT + 1;
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         
-%                         return
-%                     
-%                     % Case 3: uphill is at 15 degrees and already has 2
-%                     % passes for both dirs, set MAA to 15
-%                     elseif (operator.currAngle + operator.INCREMENT > operator.MAX_ANGLE) && ...
-%                             (operator.checkFullDir(operator.currAngle, operator.UP) == 1 || operator.checkFullDir(operator.currAngle, operator.UP) == 4)
-%                         fprintf('ALREADY FULL AND 2 PASSES AT MAX ANGLE, UPHILL MAA SET TO 15\n');
-%                         operator.uphillMAA = operator.MAX_ANGLE;
-%                         operator.foundUphill = 1;
-%                         return
-%                     
-%                     % Case 4: uphill is at 15 degrees at not full, but passed - test here again. This is the 1 case where we
-%                     % can repeat an angle more than 3 times.
-%                     elseif (operator.currAngle + operator.INCREMENT > operator.MAX_ANGLE) && (operator.checkFullDir(operator.currAngle, operator.UP) <= 0)
-%                         fprintf('Repeating angle 15 since passed at 15...\n');
-%                         return
-%                         
-%                     % Case 4: uphill's at angle + 1 isn't full
-%                     else
-%                         operator.currAngle = operator.currAngle + operator.INCREMENT;
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         
-%                         
-%                         return
-%                     end
-%                 end
-%                     
-%             
-%             % --- we didn't find downhill MAA yet, but already have uphill
-%             elseif operator.foundUphill && ~operator.foundDownhill  % ignore uphill
-%                 if downhill == 0
-%                     timesVisited = operator.checkAngleFullDir(operator.currAngle - 1, operator.DOWN);
-%                     % IMPOSSIBLE CASES: isFull == 1 since cannot currently
-%                     % be lower than a full angle with 2 passes
-%                     
-%                     % IMPOSSIBLE CASES: 
-%                     % isFull == 1 since cannot currently be lower than a
-%                     % full angle with 2 passes **UNLESS we visited with the
-%                     % other angle
-%                     % isFull == 2 and full here with 2 fails since cannot visit the same angle 3 times and fail >2/3 at adjacent angles
-%                     % isFull == 2 and full here with 2 passes since that would imply we found MAA, so we should've terminated
-%                     
-%                     % Case 1: angle - 1 downhill is full with 2 fails, here is not
-%                     % full and failed, test here again in case pass
-%                     if timesVisited == 2 && operator.checkAngleFullDir(operator.currAngle, operator.DOWN) <= 0
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         
-%                         return
-%                     
-%                     % Case 2/default: uphill at angle - 1 isn't full
-%                     else
-%                         operator.currAngle = operator.currAngle - operator.INCREMENT;
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         
-%                         return
-%                     end
-%                     
-%                 else  % downhill == 1
-%                     timesVisited = operator.checkAngleFullDir(operator.currAngle + 1, operator.DOWN);
-%                     % IMPOSSIBLE CASES: 
-%                     % isFull == 1 since cannot currently be lower than a
-%                     % full angle with 2 passes ** UNLESS we visited with
-%                     % the other angle
-%                     % isFull == 2 and full here with 2 fails since cannot visit the same angle 3 times and fail >2/3 at adjacent angles
-%                     % isFull == 2 and full here with 2 passes since that would imply an MAA found at this angle so the loop would terminate!
-%                     
-%                     
-%                     % Case 1: if downhill's angle + 1 is full with 2 fails and here
-%                     % isn't full, test here again
-%                     if timesVisited == 2 && operator.checkAngleFullDir(operator.currAngle, operator.DOWN) <= 0
-%                         fprintf('Testing at angle %d again...\n', operator.currAngle);
-%                         
-%                         return
-%                         
-%                     % Case 2: if downhill has 2 passes at angle+1, go to angle + 2 (as long as it's not full)   
-%                     elseif timesVisited == 1 || timesVisited == 3 && operator.currAngle + operator.INCREMENT + 1 < operator.MAX_ANGLE
-%                         operator.currAngle = operator.currAngle + operator.INCREMENT + 1;
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         return
-%                         
-%                     % Case 3: downhill is at 15 degrees and passed, full
-%                     % here already with 2 passes
-%                     elseif (operator.currAngle + operator.INCREMENT > operator.MAX_ANGLE) && ...
-%                             (operator.checkFullDir(operator.currAngle, operator.DOWN) == 1 || operator.checkFullDir(operator.currAngle, operator.DOWN) == 4)
-%                         fprintf('ALREADY 3 TRIALS AT 15, UPHILL MAA SET TO 15\n');
-%                         operator.uphillMAA = operator.MAX_ANGLE;
-%                         operator.foundUphill = 1;
-%                         return
-%                     
-%                     % Case 4: downhill is at 15 degrees at not full, but
-%                     % passed - test here again. This is the 1 case where we
-%                     % can repeat an angle more than 3 times.
-%                     elseif (operator.currAngle + operator.INCREMENT > operator.MAX_ANGLE) && ...
-%                             (operator.checkFullDir(operator.currAngle, operator.DOWN) <= 0)
-%                         fprintf('Repeating angle 15 since passed at 15...\n');
-%                         return
-%                         
-%                     % Case 5: downhill's at angle + 1 isn't full
-%                     else
-%                         operator.currAngle = operator.currAngle + operator.INCREMENT;
-%                         fprintf('Moving to angle %d...\n', operator.currAngle);
-%                         
-%                         return
-%                     end
-%                 end
-%             end
-%         end
 
         %% Adjust the angle based on the trial results, return the new angle
         function adjustAngle(operator, uphill, downhill)
+            operator.checkFirstSlipAngle;
+            operator.checkMAA;
             if uphill == 0 || downhill == 0
                 % Case 1: (0,0)
                 if (uphill == 0 && downhill == 0)
@@ -716,7 +385,7 @@ classdef Operator < handle
             % Bounded above >= and UP
             result = 0;
             counter1 = 0;
-            if strcmp(position, 'above') && direction == operator.UP
+            if (strcmp(position, 'above') && (strcmp(direction, operator.UP)))
                 if operator.currAngle == 15
                    result = 1;
                    return 
@@ -737,7 +406,7 @@ classdef Operator < handle
             end
 
             % Bounded below <= and DOWN  
-            if strcmp(position, 'above') && direction == operator.DOWN
+            if strcmp(position, 'above') && strcmp(direction, operator.DOWN)
                 if operator.currAngle == 15
                    result = 1;
                    return 
@@ -805,7 +474,7 @@ classdef Operator < handle
             if strcmp(position, 'non-increasing')
                 for i = angle+1:-1:1
                     for file = fileNumCols
-                        if isempty(operator.results{i + 1, file})
+                        if isempty(operator.results{i, file})
                             result = i - 1; 
                             return
                         end
@@ -817,7 +486,7 @@ classdef Operator < handle
             if strcmp(position, 'non-decreasing')
                 for i = angle+1:16
                     for file = fileNumCols
-                        if isempty(operator.results{i + 1, file})
+                        if isempty(operator.results{i, file})
                             result = i - 1; 
                             return
                         end
@@ -826,26 +495,24 @@ classdef Operator < handle
             end
         end
         
-        %% Helper - checkFirstSlipAngle -> return the angle where the first slip happens
+        %% Helper - checkFirstSlipAngle -> modify releated properties where the first slip happens
         function checkFirstSlipAngle(operator)
-        % fileNumCols = [2, 5, 8];
             temp = [];
+            
             if ~operator.firstSlip
-                for row = 1:16
-                    if operator.results{row, 2}
-                        temp = [temp; operator.results(row, 2:4)];
-                    end
-                    if operator.results{row, 5}
-                        temp = [temp; operator.results(row, 5:7)];
-                    end
-                    if operator.results{row, 8}
-                        temp = [temp; operator.results(row, 8:10)];
+                for i = 1:operator.trialNum
+                    for angleIndex = 1:16
+                        if i == operator.results{angleIndex,2}
+                            temp = [temp, operator.results(angleIndex, 1:4)];
+                        end
                     end
                 end
                 
-                for trial = 1:size(temp)
-                    if ~temp{trial,2} || ~temp{trial,3}
-                        operator.firstSlipAngle = cell2mat(temp(trial,1));
+                
+                length = size(temp, 2);
+                for file = 1:4:length
+                    if ~temp{file+2} || ~temp{file+3}
+                        operator.firstSlipAngle = temp{file};
                         operator.firstSlip = 1;
                         break
                     end
