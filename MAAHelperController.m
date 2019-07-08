@@ -174,9 +174,9 @@ fprintf('--- CURRENT ANGLE: %d ---\n', handles.operator.currAngle);
 % set the curr tested angle before we modify it
 handles.justTestedAngle = handles.operator.currAngle;
 
+handles.operator.checkFirstSlipAngle();
 handles.operator.recordResults(handles.resultUphill, handles.resultDownhill);
 handles.operator.checkMAA(); 
-handles.operator.checkFirstSlipAngle();
 
 % decide next angle:
 % implement an if statement to execute this line 

@@ -160,8 +160,8 @@ classdef Operator < handle
             
             % new 
             disp(operator.results);
-            disp(operator.resultsDown)
-            disp(operator.resultsUp)
+%             disp(operator.resultsDown)
+%             disp(operator.resultsUp)
             
             result = result + 1;  % if 1, its ok! if 2 then we overwrote :(
             operator.trialNum = operator.trialNum + 1;
@@ -169,10 +169,10 @@ classdef Operator < handle
         
         %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees
         function [upMAA, downMAA] = checkMAA(operator)
-%             entryCols = [3, 5, 7];
+
             upEntry = [3, 6, 9];
             downEntry = [4, 7, 10];
-            
+%             entryCols = [3, 5, 7];            
 %             % angleIndex - 1 == angle, go from indices 2, 3, 4,... 16 since we check angle (0, 1), (1, 2), ..., (14, 15)
 %             for angleIndex=2:operator.MAX_ANGLE+1  
 %                 numPassesPriorUp = 0;
@@ -632,71 +632,77 @@ classdef Operator < handle
             if uphill == 0 || downhill == 0
                 % Case 1: (0,0)
                 if (uphill == 0 && downhill == 0)
-                   if ~(operator.bounded("UP",">=",operator.currAngle - 1) && operator.bounded("DOWN",">=",operator.currAngle - 1))
-                         operator.currAngle = operator.nextAngleHellper(operator.currAngle, ">=");
+                   if ~(operator.bounded('UP','below',operator.currAngle - 1) && operator.bounded('DOWN','below',operator.currAngle - 1))
+                         operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
                 end
                 % Case 2: (0,1)
                 if (uphill == 0 && downhill == 1)
                     if operator.foundDownhill
-                        uphillBoundedAngle = operator.searchBoundedAboveAngle('UP');
-                        operator.nextAngleHellper(uphillBoundedAngle + 1, '>=');
+                        uphillBoundedAngle = operator.searchBoundedBelowAngle('UP');
+                        operator.currAngle = operator.nextAngleHelper(uphillBoundedAngle + 1, 'non-decreasing');
                     elseif operator.foundUphill
-                        downhillBoundedAngle = operator.searchBoundedAboveAngle('DOWN');
-                        operator.nextAngleHellper(downhillBoundedAngle + 1, '>=');
+                        downhillBoundedAngle = operator.searchBoundedBelowAngle('DOWN');
+                        operator.currAngle = operator.nextAngleHelper(downhillBoundedAngle + 1, 'non-decreasing');
                     else
-                        if operator.bounded('UP', operator.currAngle + 1, '>=') && operator.bounded('DOWN', operator.currAngle + 1, '>=')
-                            operator.nextAngleHellper(operator.currAngle, '>=');
+                        if operator.bounded('UP','below',operator.currAngle - 1) && operator.bounded('DOWN','below',operator.currAngle - 1)
+                            operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
                         else
-                             operator.nextAngleHellper(operator.currAngle - 1, '<=');
+                             operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                         end
                     end
                 end
                 % Case 3: (1,0)
                 if (uphill == 1 && downhill == 0)
                     if operator.foundUphill
-                        downhillBoundedAngle = operator.searchBoundedAboveAngle('DOWN');
-                        operator.nextAngleHellper(downhillBoundedAngle + 1, '>=');
+                        downhillBoundedAngle = operator.searchBoundedBelowAngle('DOWN');
+                        operator.currAngle = operator.nextAngleHelper(downhillBoundedAngle + 1, 'non-decreasing');
                     elseif operator.foundDownhill
-                        uphillBoundedAngle = operator.searchBoundedAboveAngle('UP');
-                        operator.nextAngleHellper(uphillBoundedAngle + 1, '>=');
+                        uphillBoundedAngle = operator.searchBoundedBelowAngle('UP');
+                        operator.currAngle = operator.nextAngleHelper(uphillBoundedAngle + 1, 'non-decreasing');
                     else
-                        if (operator.bounded('UP', operator.currAngle + 1, '>=') && operator.bounded('DOWN', operator.currAngle + 1, '>='))
-                            % ouput was not assigned
-                            operator.nextAngleHellper(operator.currAngle, '>=');
+                        if operator.bounded('UP','below',operator.currAngle - 1) && operator.bounded('DOWN','below',operator.currAngle - 1)
+                            operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
                         else
-                             operator.nextAngleHellper(operator.currAngle - 1, '<=');
+                             operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                         end
                     end
                 end
                 % Case 4: (*,0)
                 if (uphill == '*' && downhill == 0)
-                   if ~(operator.bounded("DOWN",">=",operator.currAngle - 1))
-                         operator.currAngle = operator.nextAngleHellper(operator.currAngle - 1, "<=");
+                   if ~(operator.bounded('DOWN','below',operator.currAngle - 1))
+                         operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
                 end
                 % Case 5: (0,*)
                 if (uphill == 0 && downhill == '*')
-                   if ~(operator.bounded("UP",">=",operator.currAngle - 1))
-                         operator.currAngle = operator.nextAngleHellper(operator.currAngle - 1, "<=");
+                   if ~(operator.bounded("UP",'below',operator.currAngle - 1))
+                         operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
                 end
             else
-               %  Case 6: (1,*) && Case 7: (*,1)
-                if (uphill == 1 && downhill == '*') || (uphill == '*' && downhill == 1)
-                    if operator.bounded("UP","<=",operator.currAngle + 1) && operator.bounded("UP","<=",operator.currAngle + 1)
-                         operator.currAngle = operator.nextAngleHellper(operator.currAngle + 1, ">=");
+                %  Case 6: (1,*) 
+                if (uphill == 1 && downhill == '*') 
+                    if ~operator.bounded('UP','above',operator.currAngle + 1)
+                         operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1,'non-decreasing');
                     end
                 end
-                % Case 7: (1,1)
+                % Case 7: (*,1)
+                if (uphill == '*' && downhill == 1) 
+                    if ~operator.bounded('DOWN','above',operator.currAngle + 1)
+                         operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
+                    end
+                end
+                % Case 8: (1,1)
                 if (uphill == 1 && downhill == 1)
                     if operator.firstSlip
-                        if ~(operator.bounded("UP","<=",operator.currAngle + 1) && operator.bounded("DOWN","<=",operator.currAngle + 1))
-                            operator.currAngle = operator.nextAngleHellper(operator.currAngle + 1, ">=");
+                        if ~(operator.bounded('UP','above', operator.currAngle + 1) && operator.bounded('DOWN','above',operator.currAngle + 1))
+                            operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
                         end
                     else 
                         if operator.currAngle + 2 <= 15
                             operator.currAngle = operator.currAngle + 2;
+            
                         end
                     end
                 end
@@ -704,13 +710,14 @@ classdef Operator < handle
         end
         
         %% Check if the current angle is bounded below or above by its adjacent angle or itself
-        function result = bounded(operator, direction, angle, position)
+        function result = bounded(operator, direction, position, angle)
             
             fileNumCols = [2, 5, 8];
             % Bounded above >= and UP
+            result = 0;
             counter1 = 0;
             if strcmp(position, 'above') && direction == operator.UP
-                if angle == 15
+                if operator.currAngle == 15
                    result = 1;
                    return 
                 end
@@ -731,7 +738,7 @@ classdef Operator < handle
 
             % Bounded below <= and DOWN  
             if strcmp(position, 'above') && direction == operator.DOWN
-                if angle == 15
+                if operator.currAngle == 15
                    result = 1;
                    return 
                 end
@@ -751,12 +758,12 @@ classdef Operator < handle
             end 
             % Bounded below < and UP
             if strcmp(position, 'below') && strcmp(direction, operator.UP)
-                if angle == 0
+                if operator.currAngle == 0
                    result = 1;
                    return 
                 end
                 for file = fileNumCols
-                    if ~isempty(operator.results{angle + 1, file}) && operator.results{angle + 1, file + 1} == 1
+                    if ~(isempty(operator.results{angle + 1, file})) && operator.results{angle + 1, file + 1} == 1
                         counter1 = operator.results{angle + 1, file + 1};
                     end
 %                     if operator.results{angle, file} && operator.results{angle, file + 1} == 1
@@ -771,9 +778,9 @@ classdef Operator < handle
             end
             % Bounded below < and DOWN
             if strcmp(position, 'below') && strcmp(direction, operator.DOWN)
-                if angle == 0
-                    result = 1;
-                    return 
+                if operator.currAngle == 0
+                   result = 1;
+                   return 
                 end
                 for file = fileNumCols
                     if ~isempty(operator.results{angle + 1, file}) && operator.results{angle + 1, file + 2} == 1
@@ -792,26 +799,27 @@ classdef Operator < handle
         end
         
         %% Iterate over to find next angle 
-        function result = nextAngleHellper (operator, angle, position)
+        function result = nextAngleHelper (operator, angle, position)
             fileNumCols = [2, 5, 8];
             % find less than or equal to <=
             if strcmp(position, 'non-increasing')
-                for i = angle:-1:1
+                for i = angle+1:-1:1
                     for file = fileNumCols
-                        if isempty(operator.results{i, file})
-                            result = i-1; 
-                            break
+                        if isempty(operator.results{i + 1, file})
+                            result = i - 1; 
+                            return
                         end
                     end
+                    
                 end
             end
             % find greater than or equal to >=
             if strcmp(position, 'non-decreasing')
-                for i = angle:16
+                for i = angle+1:16
                     for file = fileNumCols
-                        if isempty(operator.results{i, file})
-                            result = i-1; 
-                            break
+                        if isempty(operator.results{i + 1, file})
+                            result = i - 1; 
+                            return
                         end
                     end
                 end
@@ -845,32 +853,32 @@ classdef Operator < handle
             end
         end   
         
-        %% Helper - searchBoundedAboveAngle -> find greatest angle that has two 1s
-        function result = searchBoundedAboveAngle(operator, direction)
+        %% Helper - searchBoundedBelowAngle -> find greatest angle that has two 1s
+        function result = searchBoundedBelowAngle(operator, direction)
             fileNumCols = [2, 5, 8];
             if strcmp(direction, 'UP')
-                for i = 1:-1:16
+                for i = 16:-1:1
                     counter = 0;
                     for file = fileNumCols
-                        if operator.results{i+1,file + 1} == 1
+                        if operator.results{i,file + 1} == 1
                             counter = counter + 1; 
                             if counter >= 2
                                 result = i-1;
-                                break
+                                return 
                             end
                         end
                     end
                 end
             end
             if strcmp(direction, 'DOWN')
-                for i = 1:-1:16
+                for i = 16:-1:1
                     counter = 0;
                     for file = fileNumCols
-                        if operator.results{i+1,file + 2} == 1
+                        if operator.results{i,file + 2} == 1
                             counter = counter + 1; 
                             if counter >= 2
                                 result = i-1;
-                                break
+                                return 
                             end
                         end
                     end
