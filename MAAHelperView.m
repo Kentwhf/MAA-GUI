@@ -105,7 +105,9 @@ set(handles.nextAngleWindow, 'String', 'N/A');  % after this listener is notifie
 % --- Do this when the thing changes
 function onChangedTrial(handles, operator)
 % plot and print out next angle and other info
-fprintf('    ---- updating angle: %d\n', operator.currAngle);
+if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
+    fprintf('    ---- updating angle: %d\n', operator.currAngle);
+end
 
 % angle information
 set(handles.currAngleWindow, 'String', operator.lastTestedAngle);

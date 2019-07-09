@@ -181,7 +181,9 @@ handles.operator.checkMAA();
 % implement an if statement to execute this line 
 handles.operator.adjustAngle(handles.resultUphill, handles.resultDownhill);
 
-fprintf('    NEXT ANGLE: %d\n', handles.operator.currAngle);
+if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
+    fprintf('    NEXT ANGLE: %d\n', handles.operator.currAngle);
+end 
 
 % disable the uphill/downhill panels if we found an MAA for that dir
 if handles.operator.foundUphill
