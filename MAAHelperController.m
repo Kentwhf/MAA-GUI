@@ -43,7 +43,6 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-
 % --- Executes just before MAAHelperController is made visible.
 function MAAHelperController_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -78,7 +77,6 @@ MAAHelperView(handles.operator);
 
 %handles
 movegui(handles.figure1, 'east');
-
 
 % --- Outputs from this function are returned to the command line.
 function varargout = MAAHelperController_OutputFcn(hObject, eventdata, handles) 
@@ -132,7 +130,6 @@ handles.resultUphill = 0;
 checkResultsInput(handles);
 %fprintf('PRESSED UPHILL F\n');
 guidata(hObject,handles)  % save changes to handles
-
 
 %% DOWNHILL RESULTS BUTTONS
 % --- Executes on button press in downhillPassButton.
@@ -755,6 +752,9 @@ Excel.visible = true;
 Excel.DisplayAlerts = false;
 Excel.EnableSound = false;
 
+SPREADSHEET_SESSION = 'U:\Projects\Winter Projects\Kent\GUI\MAA-GUI\exported_session.xlsx'; 
+excelWriteCells = handles.operator.exportDataCells;
+
 if ~exist(SPREADSHEET_SESSION, 'file')
     fprintf('Output file doesnt exist, making it now lol...\n');
     f = fopen(SPREADSHEET_SESSION, 'w');
@@ -767,11 +767,9 @@ Worksheets.Item(1).Activate;
 xlswrite1(SPREADSHEET_SESSION, excelWriteCells);
 
 % spreadsheet with all our data
-SPREADSHEET_SESSION = 'U:\Projects\Winter Projects\Kent\GUI\MAA-GUI\exported_session_2.xlsx'; 
 %'K:\winterlab\footwear database\Tipper Operator.exported_session.xlsx';
 
 % write to the file
-excelWriteCells = handles.operator.exportDataCells;
 
 
 xlswrite(SPREADSHEET_SESSION, excelWriteCells, 'SessionData', 'A2:AE2');
