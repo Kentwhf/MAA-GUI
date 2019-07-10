@@ -764,15 +764,15 @@ Excel.Workbooks.Open(SPREADSHEET_SESSION);
 Workbook = Excel.ActiveWorkbook;
 Worksheets = Workbook.sheets;
 Worksheets.Item(1).Activate;
-xlswrite1(SPREADSHEET_SESSION, excelWriteCells);
 
 % spreadsheet with all our data
 %'K:\winterlab\footwear database\Tipper Operator.exported_session.xlsx';
 
 % write to the file
 
+xlswrite1(SPREADSHEET_SESSION, excelWriteCells);
 
-xlswrite(SPREADSHEET_SESSION, excelWriteCells, 'SessionData', 'A2:AE2');
+% xlswrite(SPREADSHEET_SESSION, excelWriteCells, 'SessionData', 'A3:AE3');
 
 % Save our changes to file
 invoke(Excel.ActiveWorkbook,'Save'); 

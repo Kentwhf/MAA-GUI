@@ -1,5 +1,5 @@
 function xlswrite1(file,data,sheet,range)
-Excel=evalin('base','Excel');
+Excel=evalin('caller','Excel');
 % Set default values.
 Sheet1 = 1;
 
