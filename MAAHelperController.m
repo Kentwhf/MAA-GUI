@@ -747,11 +747,23 @@ fprintf('Exporting to excel...\n');
 % fprintf('NOT IMPLEMENTED YET\n');
 Excel = actxserver ('Excel.Application');
 
+% Row headings
+% ADD age, height, weight as new headings 
+REB = '10-051-DE';
+ROW_HEADINGS = {'REB#'	'test'	'id'	'sub#'	'brand'	'name'	'Style#'	'iDAPT#'...
+    'sex'	'Footwear size'	'order'	'surface'	'repeats'	'MAA'	'uphill'	'downhill'...
+    'first slip'	'pre slip'	'slip'	'thermal'	'fit'	'heaviness'	'overall'...
+    'easy take off'	'use'	'compare'	'observor'	'session'	'date'	'time'	'air temp'...
+    'ice temp'	'RH'	'airtemp average'	'icetemp average'	'CIMCO AIR TEMP'	'CIMCO ICE TEMP'...
+    'MATLAB AIR TEMP'	'MATLAB ICE TEMP'	'time order'};
+
 % Set preferred excel parameters - no sound, complaints, and visible
 Excel.visible = true;
 Excel.DisplayAlerts = false;
 Excel.EnableSound = false;
 
+% Store the data matrix somewhere 
+% Undo button in the future 
 SPREADSHEET_SESSION = 'U:\Projects\Winter Projects\Kent\GUI\MAA-GUI\exported_session.xlsx'; 
 excelWriteCells = handles.operator.exportDataCells;
 
