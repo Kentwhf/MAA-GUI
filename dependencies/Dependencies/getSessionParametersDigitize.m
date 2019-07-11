@@ -54,11 +54,11 @@ downMAA = cell_DOWNMAA.value;
 [autoUp, autoDown] = findMAA(trialMatrix);
 
 if isnumeric(upMAA) && upMAA ~= autoUp
-    upMAA = autoUp
+    upMAA = autoUp;
     errorMAAUp = sprintf('Uphill MAA recorded does not match expected! Obtained: %d  |  Expected: %d\nUsing Expected...\n', upMAA, autoUp);
 end
 if isnumeric(downMAA) && downMAA ~= autoDown
-    downMAA = autoDown
+    downMAA = autoDown;
     errorMAADown = sprintf('Downhill MAA recorded does not match expected! Obtained: %d  |  Expected: %d\nUsing Expected...\n', downMAA, autoDown);
 end
 if ~isnumeric(upMAA)

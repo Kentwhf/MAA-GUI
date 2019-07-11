@@ -173,13 +173,17 @@ for file = 1 : numExcelFiles
         
         % Get trial matrix range
         readBuffer = get(Excel.ActiveSheet, 'Range', TRIAL_CELLS);
-
-        % Remove all missing values to NaN bread
+        disp(readBuffer.value);
+        
+        % Useless code
+        % Remove all missing values to NaN 
         ivalidEntries = cellfun(@ischar, readBuffer.value);
+        disp(ivalidEntries);
         readBuffer.value(ivalidEntries) = {-1};  % any uni-directional trial is marked as -1 for the untested dir
-
+       
         % Extract the numbers and convert to a 2D array
         myDataRetrieved = cell2mat(readBuffer.value);
+        disp(myDataRetrieved);
 
         % Read info from MAA columns and rows of participant results
         [parameterMap, errorMAAUp, errorMAADown] = getSessionParametersDigitize(Excel, SUB_CELL, FOOTWEAR_CELL, WALKWAY_CELL, SEX_CELL, UPHILL_MAA_CELL, DOWNHILL_MAA_CELL, DATE_CELL, TIME_CELL, SIZE_CELL, OBV_CELL, ORDER_CELL, PRESLIP_CELL, SLIPPERINESS_CELL, THERMAL_CELL, FIT_CELL, HEAVINESS_CELL, OVERALL_CELL, EASE_CELL, USE_CELL, COMPARE_CELL, myDataRetrieved);
@@ -200,12 +204,14 @@ for file = 1 : numExcelFiles
             continue
         end
         
-        if parameterMap('upMAA') == -1  || ~strcmp('', errorUpMAA)
+        if parameterMap('upMAA') == -1  || ~strcmp('', errorMAAUp)
+            disp(parameterMap('upMAA'));
+            disp(errorUpMAA);
             fprintf(2, 'WARINING! Funky UP MAA at %s  |  Sheet %d. %s \n', currFile, sheetIndex, errorUpMAA);
             errorsInData = [errorsInData sprintf('%s  |  Sheet %d  |  %s', currFile, sheetIndex, errorUpMAA)];
             errorCount = errorCount + 1;
         end
-        if  parameterMap('downMAA') == -1 || ~strcmp('', errorDownMAA)
+        if  parameterMap('downMAA') == -1 || ~strcmp('', errorMAADown)
             fprintf(2, 'WARINING! Funky DOWN MAA at %s  | Sheet %d. %s\n', currFile, sheetIndex, errorDownMAA);
             errorsInData = [errorsInData sprintf('%s  |  Sheet %d  |  %s', currFile, sheetIndex, errorDownMAA)];
             errorCount = errorCount + 1;

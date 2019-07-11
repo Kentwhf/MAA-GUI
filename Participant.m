@@ -8,6 +8,7 @@ classdef Participant < handle
         size  % footwear size
         height % subject height
         weight % subject weight
+        age % subject age
     end
     
     events
@@ -50,6 +51,21 @@ classdef Participant < handle
         
         function setSize(participant, size)
             participant.size = size;
+            %notify(participant,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
+        end
+        
+        function setHeight(participant, height)
+            participant.height = height;
+            %notify(participant,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
+        end
+        
+        function setWeight(participant, weight)
+            participant.weight = weight;
+            %notify(participant,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
+        end
+        
+        function setAge(participant, age)
+            participant.age = age;
             %notify(participant,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
         end
         

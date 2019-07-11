@@ -22,7 +22,7 @@ function varargout = MAAHelperController(varargin)
 
 % Edit the above text to modify the response to help MAAHelperController
 
-% Last Modified by GUIDE v2.5 12-Jun-2019 16:50:40
+% Last Modified by GUIDE v2.5 11-Jul-2019 10:27:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -158,7 +158,6 @@ checkResultsInput(handles);
 %fprintf('PRESSED DOWNHILL F\n');
 guidata(hObject,handles)  % save changes to handles
 
-
 %% CONFRIM RESULTS BUTTON
 % --- Executes on button press in ConfirmButton.
 function ConfirmButton_Callback(hObject, eventdata, handles)
@@ -232,10 +231,8 @@ guidata(hObject,handles)  % save changes to handles
 % notify the viewer to update the data
 handles.operator.notifyListeners();
 
-
 %% PARTICIPANT INFO
 
-% --- Executes during object creation, after setting all properties.
 function participantID_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to participantID (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -247,20 +244,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-% --- Executes during object creation, after setting all properties.
-function partiSizeEdit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to partiSizeEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
 function participantID_Callback(hObject, eventdata, handles)
 % hObject    handle to participantID (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -270,33 +253,6 @@ function participantID_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of participantID as text
 %        str2double(get(hObject,'String')) returns contents of participantID as a double
 
-function partiSizeEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to partiSizeEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Need to parse data 
-
-% Hints: get(hObject,'String') returns contents of partiSizeEdit as text
-%        str2double(get(hObject,'String')) returns contents of partiSizeEdit as a double
-
-% --- Executes on button press in updatePartiButton.
-function updatePartiButton_Callback(hObject, eventdata, handles)
-% hObject    handle to updatePartiButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Need to parse data 
-
-% change the participant stuff
-handles.operator.session.participant.setID(get(handles.participantID, 'String'));
-handles.operator.session.participant.setSex(get(get(handles.partiSexPanel, 'SelectedObject'), 'String'));
-handles.operator.session.participant.setSize(str2double(get(handles.partiSizeEdit, 'String')));
-
-%handles.operator.session.participant.toString()
-% notify the viewer
-handles.operator.session.participant.notifyListeners();
-
-% --- Executes when selected object is changed in participant sex selection
 function partiSexPanel_SelectionChangeFcn(hObject, eventdata, handles)
 % Need to parse data 
 newButton = get(eventData.NewValue, 'Tag');
@@ -307,18 +263,25 @@ switch newButton
         fprintf('F selected');
 end
 
+function partiHeightEdit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to partiHeightEdit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
 function partiHeightEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to partiHeightEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Need to parse data 
 
-% Hints: get(hObject,'String') returns contents of partiHeightEdit as text
-%        str2double(get(hObject,'String')) returns contents of partiHeightEdit as a double
-
-% --- Executes during object creation, after setting all properties.
-function partiHeightEdit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to partiHeightEdit (see GCBO)
+function partiWeightEdit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to partiWeightEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -334,12 +297,8 @@ function partiWeightEdit_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % Need to parse data 
 
-% Hints: get(hObject,'String') returns contents of partiWeightEdit as text
-%        str2double(get(hObject,'String')) returns contents of partiWeightEdit as a double
-
-% --- Executes during object creation, after setting all properties.
-function partiWeightEdit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to partiWeightEdit (see GCBO)
+function partiSizeEdit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to partiSizeEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -349,6 +308,47 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function partiSizeEdit_Callback(hObject, eventdata, handles)
+% hObject    handle to partiSizeEdit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% Need to parse data 
+
+function PartiAgeEdit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to PartiAgeEdit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function PartiAgeEdit_Callback(hObject, eventdata, handles)
+% hObject    handle to PartiAgeEdit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+function updatePartiButton_Callback(hObject, eventdata, handles)
+% hObject    handle to updatePartiButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Need to parse data 
+
+% change the participant stuff
+handles.operator.session.participant.setID(get(handles.participantID, 'String'));
+handles.operator.session.participant.setSex(get(get(handles.partiSexPanel, 'SelectedObject'), 'String'));
+handles.operator.session.participant.setSize(str2double(get(handles.partiSizeEdit, 'String')));
+handles.operator.session.participant.setWeight(get(handles.partiWeightEdit, 'String'));
+handles.operator.session.participant.setHeight(get(handles.partiHeightEdit, 'String'));
+handles.operator.session.participant.setAge(get(handles.partiAgeEdit, 'String'));
+
+%handles.operator.session.participant.toString()
+% notify the viewer
+handles.operator.session.participant.notifyListeners();
+
 %% SESSION INFO
 
 function iceTempEdit_Callback(hObject, eventdata, handles)
@@ -356,11 +356,6 @@ function iceTempEdit_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of iceTempEdit as text
-%        str2double(get(hObject,'String')) returns contents of iceTempEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function iceTempEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to iceTempEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -372,17 +367,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 function airTempEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to airTempEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of airTempEdit as text
-%        str2double(get(hObject,'String')) returns contents of airTempEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function airTempEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to airTempEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -394,17 +383,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 function humidEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to humidEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of humidEdit as text
-%        str2double(get(hObject,'String')) returns contents of humidEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function humidEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to humidEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -416,17 +399,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 function dateEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to dateEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of dateEdit as text
-%        str2double(get(hObject,'String')) returns contents of dateEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function dateEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to dateEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -438,17 +415,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 function timeEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to timeEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of timeEdit as text
-%        str2double(get(hObject,'String')) returns contents of timeEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function timeEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to timeEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -460,15 +431,10 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 function shoeIDEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to shoeIDEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of shoeIDEdit as text
-%        str2double(get(hObject,'String')) returns contents of shoeIDEdit as a double
-
 
 % --- Executes during object creation, after setting all properties.
 function shoeIDEdit_CreateFcn(hObject, eventdata, handles)
@@ -491,8 +457,6 @@ else
 	fprintf('wet selected\n');
 end
 
-
-% --- Executes on button press in dryIceRadio.
 function dryIceRadio_Callback(hObject, eventdata, handles)
 % hObject    handle to dryIceRadio (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -500,22 +464,17 @@ function dryIceRadio_Callback(hObject, eventdata, handles)
 % 
 % 
 % --- Executes on button press in wetIceRadio.
+
 function wetIceRadio_Callback(hObject, eventdata, handles)
 % hObject    handle to wetIceRadio (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 
 function winterUseEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to winterUseEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of winterUseEdit as text
-%        str2double(get(hObject,'String')) returns contents of winterUseEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function winterUseEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to winterUseEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -527,18 +486,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
 function easeEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to easeEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of easeEdit as text
-%        str2double(get(hObject,'String')) returns contents of easeEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function easeEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to easeEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -550,18 +502,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
 function overallScoreEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to overallScoreEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of overallScoreEdit as text
-%        str2double(get(hObject,'String')) returns contents of overallScoreEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function overallScoreEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to overallScoreEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -573,18 +518,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
 function preslipEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to preslipEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of preslipEdit as text
-%        str2double(get(hObject,'String')) returns contents of preslipEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function preslipEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to preslipEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -596,16 +534,10 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
 function slipperinessEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to slipperinessEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of slipperinessEdit as text
-%        str2double(get(hObject,'String')) returns contents of slipperinessEdit as a double
-
 
 % --- Executes during object creation, after setting all properties.
 function slipperinessEdit_CreateFcn(hObject, eventdata, handles)
@@ -619,18 +551,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
 function thermalEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to thermalEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of thermalEdit as text
-%        str2double(get(hObject,'String')) returns contents of thermalEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function thermalEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to thermalEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -642,18 +567,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
 function fitEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to fitEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of fitEdit as text
-%        str2double(get(hObject,'String')) returns contents of fitEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function fitEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to fitEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -665,18 +583,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
 function heavinessEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to heavinessEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of heavinessEdit as text
-%        str2double(get(hObject,'String')) returns contents of heavinessEdit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function heavinessEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to heavinessEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -688,16 +599,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 function observerEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to observerEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of observerEdit as text
-%        str2double(get(hObject,'String')) returns contents of observerEdit as a double
-
-% --- Executes during object creation, after setting all properties.
 function observerEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to observerEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -709,7 +615,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-% --- Executes on button press in updateSessInfoButton.
 function updateSessInfoButton_Callback(hObject, eventdata, handles)
 % hObject    handle to updateSessInfoButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -738,7 +643,6 @@ handles.operator.session.setObserver(get(handles.observerEdit, 'String'));
 % notify the viewer
 handles.operator.session.notifyListeners();
 
-% --- Executes on button press in ExportButton.
 function ExportButton_Callback(hObject, eventdata, handles)
 % hObject    handle to ExportButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -794,3 +698,6 @@ Workbook.Close(false);
 Excel.Quit;
 Excel.delete;
 clear Excel;
+
+
+
