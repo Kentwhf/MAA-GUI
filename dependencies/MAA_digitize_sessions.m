@@ -177,9 +177,9 @@ for file = 1 : numExcelFiles
         
         % Useless code
         % Remove all missing values to NaN 
-        ivalidEntries = cellfun(@ischar, readBuffer.value);
-        disp(ivalidEntries);
-        readBuffer.value(ivalidEntries) = {-1};  % any uni-directional trial is marked as -1 for the untested dir
+%         ivalidEntries = cellfun(@ischar, readBuffer.value);
+%         disp(ivalidEntries);
+%         readBuffer.value(ivalidEntries) = {-1};  % any uni-directional trial is marked as -1 for the untested dir
        
         % Extract the numbers and convert to a 2D array
         myDataRetrieved = cell2mat(readBuffer.value);

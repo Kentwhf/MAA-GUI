@@ -22,7 +22,7 @@ function varargout = MAAHelperController(varargin)
 
 % Edit the above text to modify the response to help MAAHelperController
 
-% Last Modified by GUIDE v2.5 11-Jul-2019 10:27:26
+% Last Modified by GUIDE v2.5 12-Jul-2019 12:36:51
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -314,8 +314,8 @@ function partiSizeEdit_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % Need to parse data 
 
-function PartiAgeEdit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to PartiAgeEdit (see GCBO)
+function partiAgeEdit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to partiAgeEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -325,8 +325,8 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-function PartiAgeEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to PartiAgeEdit (see GCBO)
+function partiAgeEdit_Callback(hObject, eventdata, handles)
+% hObject    handle to partiAgeEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -653,13 +653,13 @@ Excel = actxserver ('Excel.Application');
 
 % Row headings
 % ADD age, height, weight as new headings 
-REB = '10-051-DE';
-ROW_HEADINGS = {'REB#'	'test'	'id'	'sub#'	'brand'	'name'	'Style#'	'iDAPT#'...
-    'sex'	'Footwear size'	'order'	'surface'	'repeats'	'MAA'	'uphill'	'downhill'...
-    'first slip'	'pre slip'	'slip'	'thermal'	'fit'	'heaviness'	'overall'...
-    'easy take off'	'use'	'compare'	'observor'	'session'	'date'	'time'	'air temp'...
-    'ice temp'	'RH'	'airtemp average'	'icetemp average'	'CIMCO AIR TEMP'	'CIMCO ICE TEMP'...
-    'MATLAB AIR TEMP'	'MATLAB ICE TEMP'	'time order'};
+% REB = '10-051-DE';
+% ROW_HEADINGS = {'REB#'	'test'	'id'	'sub#'	'brand'	'name'	'Style#'	'iDAPT#'...
+%     'sex'	'Footwear size'	'order'	'surface'	'repeats'	'MAA'	'uphill'	'downhill'...
+%     'first slip'	'pre slip'	'slip'	'thermal'	'fit'	'heaviness'	'overall'...
+%     'easy take off'	'use'	'compare'	'observor'	'session'	'date'	'time'	'air temp'...
+%     'ice temp'	'RH'	'airtemp average'	'icetemp average'	'CIMCO AIR TEMP'	'CIMCO ICE TEMP'...
+%     'MATLAB AIR TEMP'	'MATLAB ICE TEMP'	'time order'};
 
 % Set preferred excel parameters - no sound, complaints, and visible
 Excel.visible = true;
@@ -676,17 +676,26 @@ if ~exist(SPREADSHEET_SESSION, 'file')
     f = fopen(SPREADSHEET_SESSION, 'w');
     fclose(f);
 end
+
 Excel.Workbooks.Open(SPREADSHEET_SESSION);
 Workbook = Excel.ActiveWorkbook;
 Worksheets = Workbook.sheets;
-Worksheets.Item(1).Activate;
+% Worksheets.Item(1).Activate;
+
+% SessionData directory
+EXPORTED_SHEET = 'SessionData';
+Worksheets.Item(EXPORTED_SHEET).Activate;
+
+% Find the next empty row
+currentExcelRow = Excel.ActiveSheet.UsedRange.Rows.Count + 1;
 
 % spreadsheet with all our data
-%'K:\winterlab\footwear database\Tipper Operator.exported_session.xlsx';
-
 % write to the file
+% write data to the excel sheet
+[rows, cols] = size(excelWriteCells);
+cellReference = sprintf('C%d:%s%d', currentExcelRow, xlscol(cols + 2), currentExcelRow + rows - 1);
 
-xlswrite1(SPREADSHEET_SESSION, excelWriteCells);
+xlswrite1(SPREADSHEET_SESSION, excelWriteCells, EXPORTED_SHEET, cellReference);
 
 % xlswrite(SPREADSHEET_SESSION, excelWriteCells, 'SessionData', 'A3:AE3');
 
