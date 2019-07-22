@@ -168,17 +168,25 @@ function ConfirmButton_Callback(hObject, eventdata, handles)
 fprintf('--- CURRENT ANGLE: %d ---\n', handles.operator.currAngle);
 
 % set the curr tested angle before we modify it
-handles.justTestedAngle = handles.operator.currAngle;
+% handles.justTestedAngle = handles.operator.currAngle;
 
 handles.operator.recordResults(handles.resultUphill, handles.resultDownhill);
 handles.operator.checkMAA(); 
+
+% notify the viewer to update the data
+handles.operator.notifyListeners();
 
 % decide next angle:
 % implement an if statement to execute this line 
 handles.operator.adjustAngle(handles.resultUphill, handles.resultDownhill);
 
+% % notify the viewer to update the data
+% handles.operator.notifyListeners();
+
 if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
     fprintf('    NEXT ANGLE: %d\n', handles.operator.currAngle);
+    % notify the viewer to update the data
+    handles.operator.notifyListeners();
 end 
 
 % disable the uphill/downhill panels if we found an MAA for that dir
@@ -228,10 +236,9 @@ handles.resultDownhill = '*';
 
 guidata(hObject,handles)  % save changes to handles
 
-% notify the viewer to update the data
-handles.operator.notifyListeners();
-
 %% PARTICIPANT INFO
+% A bunch of listeners and their call back functions
+% Similar format in MATLAB
 
 function participantID_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to participantID (see GCBO)
@@ -350,6 +357,8 @@ handles.operator.session.participant.setAge(get(handles.partiAgeEdit, 'String'))
 handles.operator.session.participant.notifyListeners();
 
 %% SESSION INFO
+% A bunch of listeners and their call back functions
+% Similar format in MATLAB
 
 function iceTempEdit_Callback(hObject, eventdata, handles)
 % hObject    handle to iceTempEdit (see GCBO)
@@ -648,25 +657,14 @@ function ExportButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 fprintf('Exporting to excel...\n');
-% fprintf('NOT IMPLEMENTED YET\n');
 Excel = actxserver ('Excel.Application');
-
-% Row headings
-% ADD age, height, weight as new headings 
-% REB = '10-051-DE';
-% ROW_HEADINGS = {'REB#'	'test'	'id'	'sub#'	'brand'	'name'	'Style#'	'iDAPT#'...
-%     'sex'	'Footwear size'	'order'	'surface'	'repeats'	'MAA'	'uphill'	'downhill'...
-%     'first slip'	'pre slip'	'slip'	'thermal'	'fit'	'heaviness'	'overall'...
-%     'easy take off'	'use'	'compare'	'observor'	'session'	'date'	'time'	'air temp'...
-%     'ice temp'	'RH'	'airtemp average'	'icetemp average'	'CIMCO AIR TEMP'	'CIMCO ICE TEMP'...
-%     'MATLAB AIR TEMP'	'MATLAB ICE TEMP'	'time order'};
 
 % Set preferred excel parameters - no sound, complaints, and visible
 Excel.visible = true;
 Excel.DisplayAlerts = false;
 Excel.EnableSound = false;
 
-% Store the data matrix somewhere 
+% Store the data matrix somewhere  
 % Undo button in the future 
 SPREADSHEET_SESSION = 'U:\Projects\Winter Projects\Kent\GUI\MAA-GUI\exported_session.xlsx'; 
 excelWriteCells = handles.operator.exportDataCells;

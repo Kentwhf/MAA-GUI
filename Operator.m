@@ -2,12 +2,14 @@ classdef Operator < handle
     %   Operator - an abstracted tipper operator object (Model)
     %   Tipper properties during the MAA experiment
     %   UML pending... but 'uses' Participant and Session classes
+    %   Initally created by Norman
+    %   Modified and improved by Kent 
     
     properties
         session  % contains participant and all other session goodies
         currAngle % start at 3!
-        resultsUp  % table of results for uphill
-        resultsDown  % table of results for downhill
+%         resultsUp  % table of results for uphill
+%         resultsDown  % table of results for downhill
         timesVisitedAngles  % hashmap of angle-># times visited
         
         % table of results for all trails (new)
@@ -19,7 +21,7 @@ classdef Operator < handle
         % boolean flags for found MAAs
         foundUphill  % flag for uphill MAA found
         foundDownhill % flag for downhill MAA found
-        trialNum  % record trial number
+        fileNum  % record trial number
         firstSlip % first slip flag
         firstSlipAngle % where the first slip was located
         lastTestedAngle % the angle where we just tested prior to moving
@@ -57,19 +59,23 @@ classdef Operator < handle
         %% Constructor, take in session object info
         function operator = Operator(session)
             operator.session = session;
-            operator.currAngle = 3;  % initial angle is 3
+            
+            % initial angle is 3
+            operator.currAngle = 3; 
             
             % make a table for uphill and downhill, first column is angles
             % ???
-            operator.resultsUp = cell(15, 7); 
-            operator.resultsDown = cell(15, 7);
-            for i=1:16 
-               operator.resultsUp{i,1} = i-1;
-               operator.resultsDown{i,1} = i-1;
-            end
+%             operator.resultsUp = cell(15, 7); 
+%             operator.resultsDown = cell(15, 7);
+%             for i=1:16 
+%                operator.resultsUp{i,1} = i-1;
+%                operator.resultsDown{i,1} = i-1;
+%             end
+
+            % A container recording times of visted angles 
             initKeys = 0:15;
             initValues = zeros(1, 16);
-            operator.timesVisitedAngles = containers.Map(initKeys, initValues);
+            operator.timesVisitedAngles = containers.Map(initKeys, initValues); 
             
             % set MAA to -1 for now
             operator.uphillMAA = -1;
@@ -79,10 +85,10 @@ classdef Operator < handle
             operator.foundUphill = 0;
             operator.foundDownhill = 0;
             
-            operator.trialNum = 1;
+            operator.fileNum = 1;
             operator.firstSlip = 0;
-            operator.firstSlipAngle = 0;
-            operator.lastTestedAngle = -1;
+            operator.firstSlipAngle = -1;
+            operator.lastTestedAngle = 0;
             operator.lastResultUphill = '*';
             operator.lastResultDownhill = '*';
             
@@ -96,16 +102,15 @@ classdef Operator < handle
         end
         
         %% Record results for the trial, uphill and downhill are 0/1
-        % result == 1 means ok, result == 2 is ok but overwrote
-        % anywhere where currAngle is used as an index, shift by +1 since
-        % table is not 0-indexed (SHIT)
+        % currAngle = currAngleIndex - 1 as index all starts from 1 in
+        % MATLAB
         function result = recordResults(operator, uphill, downhill)
             operator.lastResultUphill = uphill;
             operator.lastResultDownhill = downhill;
             
-            % add the current angle to the time series
-            operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
-                'Time', operator.trialNum, 'OverwriteFlag', true);
+%             % add the current angle to the time series
+%             operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
+%                 'Time', operator.fileNum, 'OverwriteFlag', true);
             
             % times visited
             operator.lastTestedAngle = operator.currAngle;
@@ -113,24 +118,23 @@ classdef Operator < handle
             
             fprintf('\n--- Currently at angle %d ---\n', operator.currAngle);
             
-            % ??? 
             result = 0;
             alreadyFound = '*';  % in place of NULL,'*', '/'
             % find where to put the uphill entry {3, 5, 7}
             trialCols = [3, 5, 7];
             putHere = 0;
-            for col=trialCols
-                if isempty(operator.resultsUp{operator.currAngle + 1, col})
-                    putHere = col;
-                    break;
-                end
-            end
+%             for col=trialCols
+%                 if isempty(operator.resultsUp{operator.currAngle + 1, col})
+%                     putHere = col;
+%                     break;
+%                 end
+%             end
             
-            if putHere == 0
-               putHere = 7;
-               fprintf('WARNING!!! Overwriting row:%d (angle %d), col:%d...\n', operator.currAngle + 1, operator.currAngle, col);
-               result = 1;
-            end
+%             if putHere == 0
+%                putHere = 7;
+%                fprintf('WARNING!!! Overwriting row:%d (angle %d), col:%d...\n', operator.currAngle + 1, operator.currAngle, col);
+%                result = 1;
+%             end
             
             % put in the results, uphill and downhill share positions!
             if operator.foundUphill  
@@ -140,18 +144,18 @@ classdef Operator < handle
                 downhill = alreadyFound;
             end
             
-            fprintf('Putting %d into position (row:%d (angle %d), col:%d) for uphill...\n', uphill, operator.currAngle + 1, operator.currAngle, putHere);
-            operator.resultsUp{operator.currAngle + 1, putHere} = uphill;
-            operator.resultsUp{operator.currAngle + 1, putHere - 1} = operator.trialNum;
-            
-            fprintf('Putting %d into position (row:%d (angle %d), col:%d) for downhill...\n', downhill, operator.currAngle + 1, operator.currAngle, putHere);
-            operator.resultsDown{operator.currAngle + 1, putHere} = downhill;
-            operator.resultsDown{operator.currAngle + 1, putHere - 1} = operator.trialNum;
+%             fprintf('Putting %d into position (row:%d (angle %d), col:%d) for uphill...\n', uphill, operator.currAngle + 1, operator.currAngle, putHere);
+%             operator.resultsUp{operator.currAngle + 1, putHere} = uphill;
+%             operator.resultsUp{operator.currAngle + 1, putHere - 1} = operator.fileNum;
+%             
+%             fprintf('Putting %d into position (row:%d (angle %d), col:%d) for downhill...\n', downhill, operator.currAngle + 1, operator.currAngle, putHere);
+%             operator.resultsDown{operator.currAngle + 1, putHere} = downhill;
+%             operator.resultsDown{operator.currAngle + 1, putHere - 1} = operator.fileNum;
             
             trialCols = [2, 5, 8];
             for col=trialCols
                 if isempty(operator.results{operator.currAngle + 1, col})
-                    operator.results{operator.currAngle + 1, col} = operator.trialNum;
+                    operator.results{operator.currAngle + 1, col} = operator.fileNum;
                     operator.results{operator.currAngle + 1, col + 1} = uphill;
                     operator.results{operator.currAngle + 1, col + 2} = downhill;
                     break;
@@ -163,8 +167,8 @@ classdef Operator < handle
 %             disp(operator.resultsDown)
 %             disp(operator.resultsUp)
             
-            result = result + 1;  % if 1, its ok! if 2 then we overwrote :(
-            operator.trialNum = operator.trialNum + 1;
+%             result = result + 1;  % if 1, its ok! if 2 then we overwrote :(
+%             operator.fileNum = operator.fileNum + 1;
         end
         
         %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees
@@ -285,25 +289,26 @@ classdef Operator < handle
             end
         end
         
-        %% Adjust the angle to set number - for TESTING PURPOSES ONLY (doesn't physically move the tipper though)
-        function result = MasterAdjustAngle(operator, toAngle, uphill, downhill)
-            if toAngle < 0 || toAngle > 15
-                result = -1;
-                fprintf('toAngle out of range: must be within [0, 15]');
-            else
-                operator.currAngle = toAngle;
-                result = toAngle;
-                operator.lastTestedAngle = operator.currAngle;
-                operator.timeVisitedAngles(toAngle) = operator.timesVisitedAngles(toAngle) + 1;
-                operator.lastResultUphill = uphill;
-                operator.lastResultDownhill = downhill;
-            end
-        end
+%         %% Adjust the angle to set number - for TESTING PURPOSES ONLY (doesn't physically move the tipper though)
+%         function result = MasterAdjustAngle(operator, toAngle, uphill, downhill)
+%             if toAngle < 0 || toAngle > 15
+%                 result = -1;
+%                 fprintf('toAngle out of range: must be within [0, 15]');
+%             else
+%                 operator.currAngle = toAngle;
+%                 result = toAngle;
+%                 operator.lastTestedAngle = operator.currAngle;
+%                 operator.timeVisitedAngles(toAngle) = operator.timesVisitedAngles(toAngle) + 1;
+%                 operator.lastResultUphill = uphill;
+%                 operator.lastResultDownhill = downhill;
+%             end
+%         end
 
         %% Adjust the angle based on the trial results, return the new angle
         function adjustAngle(operator, uphill, downhill)
             operator.checkFirstSlipAngle;
             operator.checkMAA;
+            operator.fileNum = operator.fileNum + 1; 
             if uphill == 0 || downhill == 0
                 % Case 1: (0,0)
                 if (uphill == 0 && downhill == 0)
@@ -311,7 +316,7 @@ classdef Operator < handle
                          operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
                 end
-                % Case 2: (0,1)
+                % Case 2 and 3: (0,1)
                 if (uphill == 0 && downhill == 1) || (uphill == 1 && downhill == 0)
                     if operator.foundDownhill
                         if operator.searchBoundedBelowAngle('UP')
@@ -335,22 +340,6 @@ classdef Operator < handle
                         end
                     end
                 end
-%                 % Case 3: (1,0)
-%                 if (uphill == 1 && downhill == 0)
-%                     if operator.foundUphill
-%                         downhillBoundedAngle = operator.searchBoundedBelowAngle('DOWN');
-%                         operator.currAngle = operator.nextAngleHelper(downhillBoundedAngle + 1, 'non-decreasing');
-%                     elseif operator.foundDownhill
-%                         uphillBoundedAngle = operator.searchBoundedBelowAngle('UP');
-%                         operator.currAngle = operator.nextAngleHelper(uphillBoundedAngle + 1, 'non-decreasing');
-%                     else
-%                         if operator.bounded('UP','below',operator.currAngle - 1) && operator.bounded('DOWN','below',operator.currAngle - 1)
-%                             operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
-%                         else
-%                              operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
-%                         end
-%                     end
-%                 end
                 % Case 4: (*,0)
                 if (uphill == '*' && downhill == 0)
                    if ~(operator.bounded('DOWN','below',operator.currAngle - 1))
@@ -515,7 +504,7 @@ classdef Operator < handle
 %             temp = [];
             
             if ~operator.firstSlip
-                for i = 1:operator.trialNum
+                for i = 1:operator.fileNum
                     for angleIndex = 1:16
                         for file = [2,5]
                             if i == operator.results{angleIndex,file}
@@ -699,11 +688,11 @@ classdef Operator < handle
             end
         end
         
-        %% broadcast to any listeners that we modified oper8or
+        %% broadcast to any listeners that we modified operator's fields
         function notifyListeners(operator)
             % add the updated angle to the time series
             operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
-                'Time', operator.trialNum, 'OverwriteFlag', true);
+                'Time', operator.fileNum, 'OverwriteFlag', true);
             
             notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
         end

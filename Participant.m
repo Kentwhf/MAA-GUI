@@ -1,6 +1,6 @@
 classdef Participant < handle
     %Participant: A participant object containing their attributes
-    %   Represents the features of the participant in the Winterlab
+    %Represents the features of the participant in the Winterlab
     
     properties
         ID   % subject ID

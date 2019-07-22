@@ -101,7 +101,6 @@ set(handles.upDownWindow, 'String', sprintf('%s | %s', num2str(handles.operator.
 set(handles.nextAngleWindow, 'String', 'N/A');  % after this listener is notified, all angles have already been adjusted...
 
 
-
 % --- Do this when the thing changes
 function onChangedTrial(handles, operator)
 % plot and print out next angle and other info
