@@ -194,11 +194,14 @@ if handles.operator.foundUphill
     set(handles.uphillFailButton, 'enable', 'off');
     set(handles.uphillPassButton, 'enable', 'off');
     set(handles.uphillStatusIndic, 'String', 'FOUND MAA');
+    handles.resultUphill = '*';
 end
+
 if handles.operator.foundDownhill
     set(handles.downhillFailButton, 'enable', 'off');
     set(handles.downhillPassButton, 'enable', 'off');
     set(handles.downhillStatusIndic, 'String', 'FOUND MAA');
+    handles.resultDownhill = '*';
 end
 
 % set these as enabled after we found MAA
