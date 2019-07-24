@@ -259,7 +259,6 @@ function participantID_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Need to parse data 
-
 % Hints: get(hObject,'String') returns contents of participantID as text
 %        str2double(get(hObject,'String')) returns contents of participantID as a double
 
@@ -297,6 +296,7 @@ function partiWeightEdit_CreateFcn(hObject, eventdata, handles)
 
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
+
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end

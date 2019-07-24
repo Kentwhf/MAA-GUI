@@ -99,8 +99,8 @@ classdef Operator < handle
         end
         
         %% Record results for the trial, uphill and downhill are 0/1
-        function result = recordResults(operator, uphill, downhill)
-            result = 0;
+        function recordResults(operator, uphill, downhill)
+            
             operator.lastResultUphill = uphill;
             operator.lastResultDownhill = downhill;
             
@@ -126,7 +126,7 @@ classdef Operator < handle
         end
         
         %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees
-        function [upMAA, downMAA] = checkMAA(operator)
+        function checkMAA(operator)
 
             upEntry = [3, 6, 9];
             downEntry = [4, 7, 10];
@@ -176,8 +176,8 @@ classdef Operator < handle
                    operator.foundUphill = 1;
                    operator.uphillMAA = angleIndex - 2;
                    fprintf('FOUND UPHILL MAA at %d\n', operator.uphillMAA);
-               else
-                   upMAA = -1;
+%                else
+%                    upMAA = -1;
                end
                
                % check if found downhill
@@ -186,8 +186,8 @@ classdef Operator < handle
                    operator.foundDownhill = 1;
                    operator.downhillMAA = angleIndex - 2;
                    fprintf('FOUND DOWNHILL MAA at %d\n', operator.downhillMAA);
-               else
-                   downMAA = -1;
+%                else
+%                    downMAA = -1;
                end
             end
             
