@@ -1,5 +1,5 @@
 function [uphillMAA, downhillMAA] = findMAA(trialMatrix)
-%findMAA Finds the MAA via brute force for legacy datasheets
+%   findMAA Finds the MAA via brute force for legacy datasheets
 %   Finds the first occurrence of 2 passes at angle X and 2 fails at angle X+1
 UPHILL_COLS = [3 6 9 12 15];
 DOWNHILL_COLS = [4 7 10 13 16];
