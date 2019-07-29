@@ -1,0 +1,145 @@
+% -----------------------------------------------------------------------
+% A script for testing purpose
+% Using MAA_digitized_sessions.m as reference
+% Using historical MAA data sheets to examine the correstness of current
+% algorithm, with prority of final MAAs but also angle adjustment
+% Created by Kent 
+
+%% --- Initial setup ---
+workspace;  % Make sure the workspace panel is showing.
+format longg;
+format compact;
+addpath(genpath(strcat(pwd, '/dependencies/dependencies/')));  % Add dependencies
+tic
+
+TRIAL_CELLS = 'A8:P30'; 
+UPHILL_MAA_CELL = 'A40';
+DOWNHILL_MAA_CELL = 'I40';
+
+participant = Participant('sub100', 'm', 8);
+session = Session(participant, 0.08, 4.45, 68.00, 'dry', '12/12/12', '14:08', 8, 8, 8, 8, 8, 8, 8, 8, 'iDAPT000');
+
+%% ---------- Make the ActiveX Excel App into MATLAB ----------
+Excel = actxserver ('Excel.Application');
+
+% Set preferred excel parameters - no sound, complaints, and visible
+Excel.visible = true;
+Excel.DisplayAlerts = false;
+Excel.EnableSound = false;
+
+%% --- Select input ---
+topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet'; % Change to different folder if needed
+TOP_LEVEL_DIR = dir(topLevelFolder);
+[allExcelFiles, numExcelFiles] = getAllDatafilePaths(topLevelFolder, TOP_LEVEL_DIR); % a vector of all MAA datafile paths in a given directory
+
+%% -- Load and read files
+for file = 1 : numExcelFiles
+    currFile = allExcelFiles{file};
+    fprintf('----- Current file: %s -----\n', currFile);
+    
+    % if the main data file doesn't exist, we go to the next file
+    if ~exist(currFile,'file')
+        fprintf(2, 'FILE DOES NOT EXIST: %s\n', currFile);
+        continue
+    end
+
+    % Open the excel workbook datasheet file
+    Excel.Workbooks.Open(currFile);
+    Workbook = Excel.ActiveWorkbook;
+    Worksheets = Workbook.sheets;
+    
+    % Get the number of worksheets in the source datasheet file
+    numberOfSourceSheets = Worksheets.Count;
+    %fprintf('      --> Num sheets: %d\n', numberOfSourceSheets);
+    
+    % Collection matrix for all data IN A SINGLE FILE to write to file
+    datafileMatrix = {};
+    
+    sheetsEmpty = [0 0 0 0 0];
+    
+    % Read the sheet in the file
+    for sheetIndex = 1 : numberOfSourceSheets
+        fprintf('----- Current sheet: %d -----\n', sheetIndex);
+        sheetMatrix = {};
+        
+        % Invoke this excel file as active
+        Worksheets.Item(sheetIndex).Activate;
+        
+        sheetsEmpty(sheetIndex) = 1;
+        
+        % Get trial matrix range
+        readBuffer = get(Excel.ActiveSheet, 'Range', TRIAL_CELLS);
+        % disp(readBuffer.value);
+        
+        % Convert unknown trial to '*'
+        ivalidEntries = cellfun(@ischar, readBuffer.value);
+        readBuffer.value(ivalidEntries) = {-1}; 
+        
+        % Sort the trials by brute force
+        trials = [readBuffer.value(:, 2:4); readBuffer.value(:, 5:7); readBuffer.value(:, 8:10)];
+        % disp(trials);
+        trials(any(cellfun(@(x) any(isnan(x)),trials),2),:) = [];
+        [~,idx] = sort(cell2mat((trials(:,1)))); % sort just the first column
+        trials = trials(idx,:);   % sort the whole matrix using the sort indices
+      
+        % Testing model
+        operator = Operator(session);
+        for trialNum = 1 : length(trials)
+            upResult = trials{trialNum, 2};
+            downResult = trials{trialNum, 3};
+            if upResult == -1
+                upResult = '*';
+            end
+            if downResult == -1
+                downResult = '*';
+            end
+            operator.recordResults(upResult, downResult);
+            operator.adjustAngle(upResult, downResult);
+            operator.checkMAA();
+        end
+        
+        % Get table
+        disp(operator.results);
+        disp('\n')
+        disp(readBuffer.value);
+        
+        % Get MAAs
+        cell_UPMAA = get(Excel.ActiveSheet, 'Range', UPHILL_MAA_CELL);
+        cell_DOWNMAA = get(Excel.ActiveSheet, 'Range', DOWNHILL_MAA_CELL);
+        upMAA = cell_UPMAA.value;
+        downMAA = cell_DOWNMAA.value;
+%         if isnan(upMAA) || isnan(downMAA)
+%             [upMAA, downMAA] = findMAA(myDataRetrieved);
+%         end
+
+        expectedUp = upMAA;
+        expectedDown = downMAA;
+        obtainedUp = operator.uphillMAA;
+        obtainedDown = operator.downhillMAA;
+        fprintf('Expected (from the datasheet): UPHILL=%d, DOWNHILL=%d\n', expectedUp, expectedDown);
+        fprintf('Obtained: UPHILL=%d, DOWNHILL=%d\n', obtainedUp, obtainedDown);
+
+        assert(obtainedUp == expectedUp, 'FAILED: obtained up MAA did not match expected!');
+        assert(obtainedDown == expectedDown, 'FAILED: obtained down MAA did not match expected!');
+
+        fprintf('============================================\n\n');
+
+    end
+    
+    % free any utilized memory for the datasheet
+    Workbook.Close(false);
+    
+    
+end
+
+% Safely close the ActiveX server
+Excel.Quit;
+Excel.delete;
+clear Excel;
+
+
+
+
+
+
+

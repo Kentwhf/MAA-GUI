@@ -181,8 +181,8 @@ for file = 1 : numExcelFiles
         readBuffer.value(ivalidEntries) = {-1};  % any uni-directional trial is marked as -1 for the untested dir
        
         % Extract the numbers and convert to a 2D array
-         myDataRetrieved = cell2mat(readBuffer.value);
-         disp(myDataRetrieved);
+        myDataRetrieved = cell2mat(readBuffer.value);
+        disp(myDataRetrieved);
 
         % Read info from MAA columns and rows of participant results
         [parameterMap, errorMAAUp, errorMAADown] = getSessionParametersDigitize(Excel, SUB_CELL, FOOTWEAR_CELL, WALKWAY_CELL, SEX_CELL, UPHILL_MAA_CELL, DOWNHILL_MAA_CELL, DATE_CELL, TIME_CELL, SIZE_CELL, OBV_CELL, ORDER_CELL, PRESLIP_CELL, SLIPPERINESS_CELL, THERMAL_CELL, FIT_CELL, HEAVINESS_CELL, OVERALL_CELL, EASE_CELL, USE_CELL, COMPARE_CELL, myDataRetrieved);

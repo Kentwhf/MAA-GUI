@@ -122,7 +122,7 @@ classdef Operator < handle
             end
             
             % disp method just for debugging purpose
-            disp(operator.results);
+            % disp(operator.results);
         end
         
         %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees
@@ -137,120 +137,170 @@ classdef Operator < handle
             % Edge case: when currAng = 15 or 0, additional check required
             % See if two passes at 15 or two fails at 0
             
-            for angleIndex=2:operator.MAX_ANGLE + 1
-                numPassesPriorUp = 0;
-                numFailsHereUp = 0;
-                
-                numPassesPriorDown = 0;
-                numFailsHereDown = 0;
-                
-                % check to break
-                if (operator.foundUphill) && (operator.foundDownhill)
-                    return
-                end
-                
-                % 2 passes before 2 fails for MAA, check each direction
-                for col=upEntry
-                   % uphill
-                   if operator.results{angleIndex - 1, col} == 1
-                       numPassesPriorUp = numPassesPriorUp + 1;
-                   end
-                   if operator.results{angleIndex, col} == 0
-                       numFailsHereUp = numFailsHereUp + 1;
-                   end
-                end
-                   
-               for col=downEntry
-                   % downhill
-                   if operator.results{angleIndex - 1, col} == 1
-                       numPassesPriorDown = numPassesPriorDown + 1;
-                   end
-                   if operator.results{angleIndex, col} == 0
-                       numFailsHereDown = numFailsHereDown + 1;
-                   end
-               end
-               
-               % check if found uphill
-               if (numPassesPriorUp >= 2) && (numFailsHereUp >= 2) && (~operator.foundUphill)
-                   upMAA = angleIndex - 2;  % -1 for the index, -1 for the previous angle (2 fails)
-                   operator.foundUphill = 1;
-                   operator.uphillMAA = angleIndex - 2;
-                   fprintf('FOUND UPHILL MAA at %d\n', operator.uphillMAA);
-%                else
-%                    upMAA = -1;
-               end
-               
-               % check if found downhill
-               if (numPassesPriorDown >= 2) && (numFailsHereDown >= 2) && (~operator.foundDownhill)
-                   downMAA = angleIndex - 2;  % -1 for the index, -1 for the previous angle (2 fails)
-                   operator.foundDownhill = 1;
-                   operator.downhillMAA = angleIndex - 2;
-                   fprintf('FOUND DOWNHILL MAA at %d\n', operator.downhillMAA);
-%                else
-%                    downMAA = -1;
-               end
-            end
+            % ----- UPHILL
+            results0 = [operator.results(1, 3) operator.results(1, 6) operator.results(1, 9)];
+            results15 = [operator.results(16, 3) operator.results(16, 6) operator.results(16, 9)];
             
-            % check edge cases
-            % at angle 0 or 15
-            % Hideous implementation so far
-            
-            numPassesUp = 0;
-            numPassesDown = 0;
-            numFailsUp = 0;
-            numFailsDown = 0;
-            
-            if operator.currAngle == 15
-                for col=upEntry
-                    % uphill
-                    if operator.results{16, col} == 1
-                        numPassesUp = numPassesUp + 1;
-                    if numPassesUp >= 2
-                        operator.foundUphill = 1;
-                        operator.uphillMAA = 15;
+            % base case 1: MAA 0 --> 2 fails at 0
+            if length(find(cellfun(@strcmp, {0}, results0))) >= 2
+                operator.uphillMAA = 0; 
+
+            % base case 2: MAA 15 --> 2 passes at 15
+            elseif length(find(cellfun(@strcmp, {1}, results15))) >= 2
+                operator.uphillMAA = 15;
+
+            else
+                % general case: iteratively search for 2 passes behind 2 fails
+                for angleIndex = 1 : 15
+                    resultsCurrent = [operator.results(angleIndex, 3) operator.results(angleIndex, 6) operator.results(angleIndex, 9)];
+                    resultsNext = [operator.results(angleIndex, 3) operator.results(angleIndex, 6) operator.results(angleIndex, 9)];
+
+                    % 2 passes here and 2 fails above
+                    if length(find(cellfun(@strcmp, {0}, resultsCurrent))) >= 2 && length(find(cellfun(@strcmp, {1}, resultsNext))) >= 2
+                        operator.uphillMAA = angleIndex - 1;  
                     end
-                    end
-                end
-                for col = downEntry
-                    % downhill
-                    if operator.results{16, col} == 1
-                        numPassesDown = numPassesDown + 1;
-                    if numPassesDown >= 2
-                        operator.foundDownhill = 1;
-                        operator.downhillMAA = 15;
-                    end
-                    end
+
                 end
             end
 
-            if operator.currAngle == 0 
-                for col=upEntry
-                    % uphill
-                    if operator.results{1, col} == 0
-                        numFailsUp = numFailsUp + 1;
-                    if numFailsUp >= 2
-                        operator.foundUphill = 1;
-                        operator.uphillMAA = 0;
+            % ----- DOWNHILL
+            results0 = [operator.results(1, 4) operator.results(1, 7) operator.results(1, 10)];
+            results15 = [operator.results(16, 4) operator.results(16, 7) operator.results(16, 10)];
+            
+            % base case 1: MAA 0 --> 2 fails at 0
+            if length(find(cellfun(@strcmp, 0, results0))) >= 2
+                operator.downhillMAA = 0; 
+
+            % base case 2: MAA 15 --> 2 passes at 15
+            elseif length(find(cellfun(@strcmp, 1, results15))) >= 2
+                operator.downhillMAA = 15;
+
+            else
+                % general case: iteratively search for 2 passes behind 2 fails
+                for angleIndex = 1 : 15
+                    resultsCurrent = [operator.results(angleIndex, 4) operator.results(angleIndex, 7) operator.results(angleIndex, 10)];
+                    resultsNext = [operator.results(angleIndex, 4) operator.results(angleIndex, 7) operator.results(angleIndex, 10)];
+
+                    % 2 passes here and 2 fails above
+                    if length(find(cellfun(@strcmp, 0, resultsCurrent))) >= 2 && length(find(cellfun(@strcmp, 1, resultsNext))) >= 2
+                        operator.downhillMAA = angleIndex - 1;  
                     end
-                    end
-                end
-                for col = downEntry
-                    % downhill
-                    if operator.results{1, col} == 0
-                        numFailsDown = numFailsDown + 1;
-                    if numFailsDown >= 2
-                        operator.foundDownhill = 1;
-                        operator.downhillMAA = 0;
-                    end
-                    end
+
                 end
             end
+
+           
+            
+%             for angleIndex = 1:operator.MAX_ANGLE
+%                 numPassesPriorUp = 0;
+%                 numFailsHereUp = 0;
+%                 
+%                 numPassesPriorDown = 0;
+%                 numFailsHereDown = 0;
+%                 
+%                 % check to break
+%                 if (operator.foundUphill) && (operator.foundDownhill)
+%                     return
+%                 end
+%                 
+%                 % 2 passes before 2 fails for MAA, check each direction
+%                 for col=upEntry
+%                    % uphill
+%                    if operator.results{angleIndex - 1, col} == 1
+%                        numPassesPriorUp = numPassesPriorUp + 1;
+%                    end
+%                    if operator.results{angleIndex, col} == 0
+%                        numFailsHereUp = numFailsHereUp + 1;
+%                    end
+%                 end
+%                    
+%                for col=downEntry
+%                    % downhill
+%                    if operator.results{angleIndex - 1, col} == 1
+%                        numPassesPriorDown = numPassesPriorDown + 1;
+%                    end
+%                    if operator.results{angleIndex, col} == 0
+%                        numFailsHereDown = numFailsHereDown + 1;
+%                    end
+%                end
+%                
+%                % check if found uphill
+%                if (numPassesPriorUp >= 2) && (numFailsHereUp >= 2) && (~operator.foundUphill)
+%                    upMAA = angleIndex - 2;  % -1 for the index, -1 for the previous angle (2 fails)
+%                    operator.foundUphill = 1;
+%                    operator.uphillMAA = angleIndex - 2;
+%                    fprintf('FOUND UPHILL MAA at %d\n', operator.uphillMAA);
+%                end
+%                
+%                % check if found downhill
+%                if (numPassesPriorDown >= 2) && (numFailsHereDown >= 2) && (~operator.foundDownhill)
+%                    downMAA = angleIndex - 2;  % -1 for the index, -1 for the previous angle (2 fails)
+%                    operator.foundDownhill = 1;
+%                    operator.downhillMAA = angleIndex - 2;
+%                    fprintf('FOUND DOWNHILL MAA at %d\n', operator.downhillMAA);
+%                end
+%             end
+%             
+%             % check edge cases
+%             % at angle 0 or 15
+%             % Hideous implementation so far
+%             
+%             numPassesUp = 0;
+%             numPassesDown = 0;
+%             numFailsUp = 0;
+%             numFailsDown = 0;
+%             
+%             if operator.currAngle == 15
+%                 for col=upEntry
+%                     % uphill
+%                     if operator.results{16, col} == 1
+%                         numPassesUp = numPassesUp + 1;
+%                     if numPassesUp >= 2
+%                         operator.foundUphill = 1;
+%                         operator.uphillMAA = 15;
+%                     end
+%                     end
+%                 end
+%                 for col = downEntry
+%                     % downhill
+%                     if operator.results{16, col} == 1
+%                         numPassesDown = numPassesDown + 1;
+%                     if numPassesDown >= 2
+%                         operator.foundDownhill = 1;
+%                         operator.downhillMAA = 15;
+%                     end
+%                     end
+%                 end
+%             end
+% 
+%             if operator.currAngle == 0 
+%                 for col=upEntry
+%                     % uphill
+%                     if operator.results{1, col} == 0
+%                         numFailsUp = numFailsUp + 1;
+%                     if numFailsUp >= 2
+%                         operator.foundUphill = 1;
+%                         operator.uphillMAA = 0;
+%                     end
+%                     end
+%                 end
+%                 for col = downEntry
+%                     % downhill
+%                     if operator.results{1, col} == 0
+%                         numFailsDown = numFailsDown + 1;
+%                     if numFailsDown >= 2
+%                         operator.foundDownhill = 1;
+%                         operator.downhillMAA = 0;
+%                     end
+%                     end
+%                 end
+%             end
         end
 
         %% Adjust the angle based on the trial results, return the new angle
         function adjustAngle(operator, uphill, downhill)
             operator.checkFirstSlipAngle;
-            operator.checkMAA;
+            operator.checkMAA();
             operator.trialNum = operator.trialNum + 1; % Update counter
             
             % Case 1: (0,0)

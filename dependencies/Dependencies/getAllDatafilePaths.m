@@ -1,5 +1,5 @@
 function [allExcelFiles, numFiles] = getAllDatafilePaths(topLevelFolder, TOP_LEVEL_DIR)
-%Return a vector of all MAA datafile paths in a given directory
+% Return a vector of all MAA datafile paths in a given directory
 
 % Get list of all subfolders.
 allSubFolders = genpath(topLevelFolder);
