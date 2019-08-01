@@ -105,9 +105,10 @@ for file = 1 : numExcelFiles
         end
         
         % Get table
-        disp(operator.results);
         newline;
-%         disp(readBuffer.value);
+        fprintf('\n');
+        % disp(operator.results);
+        disp(readBuffer.value);
         
         % Get MAAs
         cell_UPMAA = get(Excel.ActiveSheet, 'Range', UPHILL_MAA_CELL);
