@@ -122,7 +122,7 @@ classdef Operator < handle
             end
             
             % disp method just for debugging purpose
-            disp(operator.results);
+            % disp(operator.results);
         end
         
         %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees

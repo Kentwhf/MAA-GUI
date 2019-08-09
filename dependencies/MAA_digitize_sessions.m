@@ -78,7 +78,7 @@ else
 end
 
 % FOOTWEAR LIST SHEET - SOMETIMES CHANGES!!!
-FOOTWEAR_LIST_PATH = 'I:\winterlab\footwear database\Master list of footwear updated 20190722.xlsx';
+FOOTWEAR_LIST_PATH = 'I:\winterlab\footwear database\Master list of footwear updated 20190731.xlsx';
 
 % FOOTWEAR SHEET NUMBER TO READ (read the first sheet)
 FOOTWEAR_SHEET_INDEX = 1;
