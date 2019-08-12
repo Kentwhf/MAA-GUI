@@ -34,7 +34,7 @@ classdef Operator < handle
     end
     
     properties(Constant)
-        % Some constant properties(fields), not often used 
+        % Some constant properties(fields), not often used, might delete later  
         
         % physical constraints
         MAX_ANGLE=15  % physical maximum tipper angle
@@ -346,9 +346,11 @@ classdef Operator < handle
                     end
                  
                 else
+                    
                     if operator.currAngle + 2 <= 15
                         operator.currAngle = operator.currAngle + 2;
                     end
+                    
                 end
             end
         end
