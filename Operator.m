@@ -264,8 +264,8 @@ classdef Operator < handle
                 
             end
             
-            % Case 2 and 3: (0,1) or (1,0)
-            if (uphill == 0 && downhill == 1) || (uphill == 1 && downhill == 0)
+            % Case 2: (0,1) 
+            if (uphill == 0 && downhill == 1) 
                 if operator.foundDownhill
                     [foundBoundedBelowAngle, uphillBoundedAngle] = operator.searchBoundedBelowAngle('UP');
                     if foundBoundedBelowAngle
@@ -279,11 +279,42 @@ classdef Operator < handle
                     if foundBoundedBelowAngle
                         operator.currAngle = operator.nextAngleHelper(downhillBoundedAngle + 1, 'non-decreasing');
                     else
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
+                    end
+                    
+                else
+                    if operator.bounded('UP','below',operator.currAngle - 1) && operator.bounded('DOWN','below',operator.currAngle - 1)
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
+                    elseif operator.bounded('UP','below',operator.currAngle) && operator.bounded('DOWN','below',operator.currAngle)
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
+                    else
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
+                    end
+                end
+            end
+            
+            % Case 3:(1,0)
+            if (uphill == 1 && downhill == 0)
+                if operator.foundDownhill
+                    [foundBoundedBelowAngle, uphillBoundedAngle] = operator.searchBoundedBelowAngle('UP');
+                    if foundBoundedBelowAngle
+                        operator.currAngle = operator.nextAngleHelper(uphillBoundedAngle + 1, 'non-decreasing');
+                    else
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
+                    end
+                    
+                elseif operator.foundUphill
+                    [foundBoundedBelowAngle, downhillBoundedAngle] = operator.searchBoundedBelowAngle('DOWN');
+                    if foundBoundedBelowAngle
+                        operator.currAngle = operator.nextAngleHelper(downhillBoundedAngle + 1, 'non-decreasing');
+                    else
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
                     
                 else
                     if operator.bounded('UP','below',operator.currAngle - 1) && operator.bounded('DOWN','below',operator.currAngle - 1)
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
+                    elseif operator.bounded('UP','below',operator.currAngle) && operator.bounded('DOWN','below',operator.currAngle)
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
                     else
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
@@ -329,7 +360,7 @@ classdef Operator < handle
                         if foundBoundedBelowAngle
                             operator.currAngle = operator.nextAngleHelper(uphillBoundedAngle + 1, 'non-decreasing');
                         else
-                            operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
+                            operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
                         end
                     
                     elseif operator.foundUphill
@@ -337,10 +368,10 @@ classdef Operator < handle
                         if foundBoundedBelowAngle
                             operator.currAngle = operator.nextAngleHelper(downhillBoundedAngle + 1, 'non-decreasing');
                         else
-                            operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
+                            operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
                         end
                     
-                    elseif ~(operator.bounded('UP','above', operator.currAngle + 1) && operator.bounded('DOWN','above',operator.currAngle + 1));
+                    elseif ~(operator.bounded('UP','above', operator.currAngle + 1) && operator.bounded('DOWN','above',operator.currAngle + 1))
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
                         
                     end
@@ -443,6 +474,14 @@ classdef Operator < handle
         function result = nextAngleHelper (operator, angle, position)
             trialNumCols = [2, 5, 8];
             result = 0;
+            
+            if angle == 16
+                angle = 15;
+            end
+            if angle == -1
+                angle = 0;
+            end
+            
             % find an angle that is less than or equal to <=
             if strcmp(position, 'non-increasing')
                 for i = angle+1:-1:1

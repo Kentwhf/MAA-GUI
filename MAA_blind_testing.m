@@ -29,7 +29,7 @@ Excel.DisplayAlerts = false;
 Excel.EnableSound = false;
 
 %% --- Select input ---
-topLevelFolder = 'J:\winterlab\footwear database\Tipper Operator\MAA Data\2019-08-09'; % Change to different folder if needed
+topLevelFolder = 'J:\winterlab\footwear database\Tipper Operator\MAA Data\2019-07-30'; % Change to different folder if needed
 TOP_LEVEL_DIR = dir(topLevelFolder);
 [allExcelFiles, numExcelFiles] = getAllDatafilePaths(topLevelFolder, TOP_LEVEL_DIR); % a vector of all MAA datafile paths in a given directory
 
@@ -120,6 +120,7 @@ for file = 1 : numExcelFiles
 %             [upMAA, downMAA] = findMAA(myDataRetrieved);
 %         end
 
+        operator.checkMAA;
         expectedUp = upMAA;
         expectedDown = downMAA;
         obtainedUp = operator.uphillMAA;
