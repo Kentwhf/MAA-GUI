@@ -16,6 +16,8 @@ TRIAL_CELLS = 'A8:P30';
 UPHILL_MAA_CELL = 'A40';
 DOWNHILL_MAA_CELL = 'I40';
 counter = 0;
+files = NaN;
+numOfSheets = 0;
 
 participant = Participant('sub100', 'm', 8);
 session = Session(participant, 0.08, 4.45, 68.00, 'dry', '12/12/12', '14:08', 8, 8, 8, 8, 8, 8, 8, 8, 'iDAPT000');
@@ -29,7 +31,7 @@ Excel.DisplayAlerts = false;
 Excel.EnableSound = false;
 
 %% --- Select input ---
-topLevelFolder = 'J:\winterlab\footwear database\Tipper Operator\MAA Data\2019-07-30'; % Change to different folder if needed
+topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet'; % Change to different folder if needed
 TOP_LEVEL_DIR = dir(topLevelFolder);
 [allExcelFiles, numExcelFiles] = getAllDatafilePaths(topLevelFolder, TOP_LEVEL_DIR); % a vector of all MAA datafile paths in a given directory
 
@@ -60,16 +62,19 @@ for file = 1 : numExcelFiles
     
     % Read the sheet in the file
     for sheetIndex = 1 : numberOfSourceSheets
-        fprintf('----- Current sheet: %d -----\n', sheetIndex);
-        sheetMatrix = {};
-        
+       
         % Invoke this excel file as active
         Worksheets.Item(sheetIndex).Activate;
         cell_subID = get(Excel.ActiveSheet, 'Range', 'E2:E2');  % no need range for merged cells. ask me if i care tho lmao yeet
         testEmpty = cell_subID.value;
+        
         if isnan(testEmpty)
             continue 
         end
+        
+        numOfSheets = numOfSheets + 1;
+        fprintf('----- Current sheet: %d -----\n', sheetIndex);
+        sheetMatrix = {};
         
         sheetsEmpty(sheetIndex) = 1;
         
@@ -128,15 +133,19 @@ for file = 1 : numExcelFiles
         fprintf('Expected (from the datasheet): UPHILL=%d, DOWNHILL=%d\n', expectedUp, expectedDown);
         fprintf('Obtained: UPHILL=%d, DOWNHILL=%d\n', obtainedUp, obtainedDown);
         
-        if obtainedUp ~= expectedUp
+        if any([obtainedUp ~= expectedUp, obtainedDown ~= expectedDown])
             counter = counter + 1;
+            files = vertcat(files, strcat(currFile, " Sheet#: ", string(sheetIndex)));
+            files = rmmissing(files);
         end
         
-        if obtainedDown ~= expectedDown
-            counter = counter + 1;
-        end
+%         if obtainedDown ~= expectedDown
+%             counter = counter + 1;
+%         end
 
         fprintf('Total inconsistencies=%d\n', counter);
+        fprintf('Total Sheets=%d\n', numOfSheets);
+        disp(files);
         
 %         assert(obtainedUp == expectedUp, 'FAILED: obtained up MAA did not match expected!');
 %         assert(obtainedDown == expectedDown, 'FAILED: obtained down MAA did not match expected!');

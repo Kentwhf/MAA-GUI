@@ -122,7 +122,7 @@ classdef Operator < handle
             end
             
             % disp method just for debugging purpose
-            % disp(operator.results);
+            disp(operator.results);
         end
         
         %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees
@@ -282,14 +282,14 @@ classdef Operator < handle
                     if foundBoundedBelowAngle
                         operator.currAngle = operator.nextAngleHelper(downhillBoundedAngle + 1, 'non-decreasing');
                     else
-                        operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
                     
                 else
                     if operator.bounded('UP','below',operator.currAngle - 1) && operator.bounded('DOWN','below',operator.currAngle - 1)
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
                     elseif operator.bounded('UP','below',operator.currAngle) && operator.bounded('DOWN','below',operator.currAngle)
-                        operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
                     else
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
@@ -303,7 +303,7 @@ classdef Operator < handle
                     if foundBoundedBelowAngle
                         operator.currAngle = operator.nextAngleHelper(uphillBoundedAngle + 1, 'non-decreasing');
                     else
-                        operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
                     
                 elseif operator.foundUphill
@@ -318,7 +318,7 @@ classdef Operator < handle
                     if operator.bounded('UP','below',operator.currAngle - 1) && operator.bounded('DOWN','below',operator.currAngle - 1)
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
                     elseif operator.bounded('UP','below',operator.currAngle) && operator.bounded('DOWN','below',operator.currAngle)
-                        operator.currAngle = operator.nextAngleHelper(operator.currAngle, 'non-decreasing');
+                        operator.currAngle = operator.nextAngleHelper(operator.currAngle + 1, 'non-decreasing');
                     else
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
