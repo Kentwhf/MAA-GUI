@@ -252,14 +252,17 @@ classdef Operator < handle
                     end
                     
                 elseif operator.foundUphill
+                    
                     [foundBoundedBelowAngle, downhillBoundedAngle] = operator.searchBoundedBelowAngle('DOWN');
                     if foundBoundedBelowAngle
                        operator.currAngle = operator.nextAngleHelper(downhillBoundedAngle + 1, 'non-decreasing');
                     else
                        operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end  
+                    
                 elseif ~(operator.bounded('UP','below',operator.currAngle - 1) && operator.bounded('DOWN','below',operator.currAngle - 1))
                     operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
+                    
                 end
                 
             end
