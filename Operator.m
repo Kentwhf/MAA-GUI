@@ -282,6 +282,8 @@ classdef Operator < handle
                     if foundBoundedBelowAngle
                         operator.currAngle = operator.nextAngleHelper(downhillBoundedAngle + 1, 'non-decreasing');
                     else
+                        % 'non-increasing' and 'non-decreasing' may not matter here
+                        % as there should be an empy trial for currAngle - 1
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
                     
@@ -303,6 +305,8 @@ classdef Operator < handle
                     if foundBoundedBelowAngle
                         operator.currAngle = operator.nextAngleHelper(uphillBoundedAngle + 1, 'non-decreasing');
                     else
+                        % 'non-increasing' and 'non-decreasing' may not matter here 
+                        % as there should be an empy trial for currAngle - 1
                         operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     end
                     
