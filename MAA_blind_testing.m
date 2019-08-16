@@ -143,9 +143,7 @@ for file = 1 : numExcelFiles
 %             counter = counter + 1;
 %         end
 
-        fprintf('Total inconsistencies=%d\n', counter);
-        fprintf('Total Sheets=%d\n', numOfSheets);
-        disp(files);
+        
         
 %         assert(obtainedUp == expectedUp, 'FAILED: obtained up MAA did not match expected!');
 %         assert(obtainedDown == expectedDown, 'FAILED: obtained down MAA did not match expected!');
@@ -156,6 +154,10 @@ for file = 1 : numExcelFiles
     
     % free any utilized memory for the datasheet
     Workbook.Close(false);
+    
+    fprintf('Total inconsistencies=%d\n', counter);
+    fprintf('Total Sheets=%d\n', numOfSheets);
+    disp(files);
     
 end
 
