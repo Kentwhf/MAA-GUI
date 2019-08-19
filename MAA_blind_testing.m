@@ -112,9 +112,34 @@ for file = 1 : numExcelFiles
         % Get table
         newline;
         fprintf('\n');
-        disp(operator.results);
-        disp(readBuffer.value);
         
+%         for i=operator.results
+%             a=cell{i};
+%             ind = find(a=='*'); %(example conditions put your own)
+%             a(ind) = -1;     
+%             cell{i} = a;
+%         end
+
+%         na = find(isequal(operator.results, '*'));
+%         disp(na);
+%         operator.results(na) = {-1};
+        
+%         dataSheet = readBuffer.value(1:16, 1:10);
+%         dataSheet(any(cellfun(@(x) any(isnan(x)),dataSheet))) = [];
+
+        % Remove all missing values to NaN 
+        invalidEntries = cellfun(@ischar, operator.results);
+        % disp(ivalidEntries);
+        operator.results(invalidEntries) = {-1};  % any uni-directional trial is marked as -1 for the untested dir
+        
+        % Assign a new variable for comparision 
+        temp = readBuffer.value;
+        isNanEntries = cellfun(@isnan, temp);
+        temp(isNanEntries) = {[]}; 
+        
+        disp(operator.results);
+        fprintf('\n');
+        disp(temp(1:16, 1:10));
         
         % Get MAAs
         cell_UPMAA = get(Excel.ActiveSheet, 'Range', UPHILL_MAA_CELL);
@@ -133,7 +158,10 @@ for file = 1 : numExcelFiles
         fprintf('Expected (from the datasheet): UPHILL=%d, DOWNHILL=%d\n', expectedUp, expectedDown);
         fprintf('Obtained: UPHILL=%d, DOWNHILL=%d\n', obtainedUp, obtainedDown);
         
-        if any([obtainedUp ~= expectedUp, obtainedDown ~= expectedDown])
+        
+        
+        % if any([obtainedUp ~= expectedUp, obtainedDown ~= expectedDown])
+        if ~isequal(operator.results, temp(1:16, 1:10))
             counter = counter + 1;
             files = vertcat(files, strcat(currFile, " Sheet#: ", string(sheetIndex)));
             files = rmmissing(files);
