@@ -32,6 +32,8 @@ Excel.EnableSound = false;
 
 %% --- Select input ---
 topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet'; % Change to different folder if needed
+% topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet\2019-08-16';
+
 TOP_LEVEL_DIR = dir(topLevelFolder);
 [allExcelFiles, numExcelFiles] = getAllDatafilePaths(topLevelFolder, TOP_LEVEL_DIR); % a vector of all MAA datafile paths in a given directory
 
@@ -161,7 +163,7 @@ for file = 1 : numExcelFiles
         
         
         % if any([obtainedUp ~= expectedUp, obtainedDown ~= expectedDown])
-        if ~isequal(operator.results, temp(1:16, 1:10))
+        if ~isequal(operator.results, temp(1:16, 1:10)) || any([obtainedUp ~= expectedUp, obtainedDown ~= expectedDown])
             counter = counter + 1;
             files = vertcat(files, strcat(currFile, " Sheet#: ", string(sheetIndex)));
             files = rmmissing(files);
