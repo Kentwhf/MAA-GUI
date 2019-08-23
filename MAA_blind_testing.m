@@ -32,7 +32,7 @@ Excel.EnableSound = false;
 
 %% --- Select input ---
 topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet'; % Change to different folder if needed
-% topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet\2019-08-16';
+%topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet\2019-07-11\';
 
 TOP_LEVEL_DIR = dir(topLevelFolder);
 [allExcelFiles, numExcelFiles] = getAllDatafilePaths(topLevelFolder, TOP_LEVEL_DIR); % a vector of all MAA datafile paths in a given directory
