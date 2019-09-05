@@ -400,7 +400,7 @@ classdef Operator < handle
             end
         end
        
-        %% Check if the current angle is bounded below or above by its adjacent angle or itself
+        %% Check if the current angle is bounded below or above by the given angle
         function result = bounded(operator, direction, position, angle)
             
             % AngleIndex - 1 = Angle            
@@ -596,10 +596,37 @@ classdef Operator < handle
         %% broadcast to any listeners that we modified operator's fields
         function notifyListeners(operator)
             % add the updated angle to the time series
+            % operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
+                % 'Time', operator.trialNum, 'OverwriteFlag', true);
+            
+            % notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
+
+            % Convert unknown trial to '*'
+            % ivalidEntries = cellfun(@ischar, operator.results);
+
+            % Sort the trials by brute force
+            trials = [operator.results(:, [1 2]); operator.results(:, [1 5]); operator.results(:, [1 8])];
+            % disp(trials);
+            
+            
+            validEntries = (~cellfun('isempty', trials(:, 2)));
+            
+            
+            trials = trials(validEntries, :);
+            
+            trials(any(cellfun(@(x) any(isnan(x)),trials),2),:) = [];
+            
+            [~,idx] = sort(cell2mat((trials(:,1)))); % sort by the first column
+            trials = trials(idx,:);   % sort the whole matrix using the sort indices
+            disp(trials);
+            trials = cell2mat(trials);
+            
+            operator.tseriesplot = timeseries(trials(:, 1), trials(:, 2));
+            notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
+            
             operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
                 'Time', operator.trialNum, 'OverwriteFlag', true);
             
-            notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
         end
         
         %% Export the data into rows for an excel spreadsheet
@@ -610,6 +637,7 @@ classdef Operator < handle
             sessionData = {p.ID p.ID 'N/A' 'N/A' 'N/A' s.footwearID p.sex p.size 'N/A' s.walkway 'N/A' '' operator.uphillMAA operator.downhillMAA operator.firstSlipAngle ...
                 s.preslip s.slipperiness s.thermal s.fit s.heaviness s.overall s.easeWearing s.useInWinter 'N/A' s.observer 'N/A' s.date s.time s.airTemp s.iceTemp s.humidity};
         end
+       
     end
 end
 

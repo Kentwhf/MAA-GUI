@@ -22,7 +22,7 @@ function varargout = MAAHelperController(varargin)
 
 % Edit the above text to modify the response to help MAAHelperController
 
-% Last Modified by GUIDE v2.5 12-Jul-2019 12:36:51
+% Last Modified by GUIDE v2.5 05-Sep-2019 11:17:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -67,7 +67,6 @@ handles.inputtedDownhill = 0;
 handles.resultUphill = '*';
 handles.resultDownhill = '*';
 
-
 % Update handles structure
 guidata(hObject, handles);
 
@@ -75,8 +74,14 @@ guidata(hObject, handles);
 % uiwait(handles.figure1);
 MAAHelperView(handles.operator);
 
-%handles
+% handles
 movegui(handles.figure1, 'east');
+
+% Last State
+handles.lastState = NaN; 
+
+% Undo
+set(handles.UndoButton, 'enable', 'off');
 
 % --- Outputs from this function are returned to the command line.
 function varargout = MAAHelperController_OutputFcn(hObject, eventdata, handles) 
@@ -165,23 +170,29 @@ function ConfirmButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+
 fprintf('--- CURRENT ANGLE: %d ---\n', handles.operator.currAngle);
 
 % set the curr tested angle before we modify it
 % handles.justTestedAngle = handles.operator.currAngle;
 
+handles.lastState = handles.operator;
+
 handles.operator.recordResults(handles.resultUphill, handles.resultDownhill);
 handles.operator.checkMAA(); 
-
-% notify the viewer to update the data
-handles.operator.notifyListeners();
 
 % decide next angle:
 % implement an if statement to execute this line 
 handles.operator.adjustAngle(handles.resultUphill, handles.resultDownhill);
 
+% notify the viewer to update the data
+handles.operator.notifyListeners();
+
 % % notify the viewer to update the data
 % handles.operator.notifyListeners();
+
+% Enable Undo
+set(handles.UndoButton, 'enable', 'on');
 
 if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
     fprintf('    NEXT ANGLE: %d\n', handles.operator.currAngle);
@@ -240,8 +251,8 @@ handles.resultDownhill = '*';
 guidata(hObject,handles)  % save changes to handles
 
 %% PARTICIPANT INFO
-% A bunch of listeners and their call back functions
-% Similar format in MATLAB
+% --- A bunch of listeners and their call back functions
+% --- Similar format in MATLAB
 
 function participantID_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to participantID (see GCBO)
@@ -273,21 +284,11 @@ switch newButton
 end
 
 function partiHeightEdit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to partiHeightEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 function partiHeightEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to partiHeightEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Need to parse data 
 
 function partiWeightEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to partiWeightEdit (see GCBO)
@@ -302,10 +303,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function partiWeightEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to partiWeightEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Need to parse data 
 
 function partiSizeEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to partiSizeEdit (see GCBO)
@@ -319,10 +316,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function partiSizeEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to partiSizeEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Need to parse data 
 
 function partiAgeEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to partiAgeEdit (see GCBO)
@@ -336,9 +329,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function partiAgeEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to partiAgeEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function updatePartiButton_Callback(hObject, eventdata, handles)
 % hObject    handle to updatePartiButton (see GCBO)
@@ -355,7 +345,7 @@ handles.operator.session.participant.setWeight(get(handles.partiWeightEdit, 'Str
 handles.operator.session.participant.setHeight(get(handles.partiHeightEdit, 'String'));
 handles.operator.session.participant.setAge(get(handles.partiAgeEdit, 'String'));
 
-%handles.operator.session.participant.toString()
+% handles.operator.session.participant.toString()
 % notify the viewer
 handles.operator.session.participant.notifyListeners();
 
@@ -364,41 +354,20 @@ handles.operator.session.participant.notifyListeners();
 % Similar format in MATLAB
 
 function iceTempEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to iceTempEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function iceTempEdit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to iceTempEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 function airTempEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to airTempEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function airTempEdit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to airTempEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 function humidEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to humidEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function humidEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to humidEdit (see GCBO)
@@ -412,9 +381,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function dateEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to dateEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function dateEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to dateEdit (see GCBO)
@@ -428,9 +394,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function timeEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to timeEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function timeEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to timeEdit (see GCBO)
@@ -444,9 +407,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function shoeIDEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to shoeIDEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 % --- Executes during object creation, after setting all properties.
 function shoeIDEdit_CreateFcn(hObject, eventdata, handles)
@@ -470,22 +430,10 @@ else
 end
 
 function dryIceRadio_Callback(hObject, eventdata, handles)
-% hObject    handle to dryIceRadio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% 
-% 
-% --- Executes on button press in wetIceRadio.
 
 function wetIceRadio_Callback(hObject, eventdata, handles)
-% hObject    handle to wetIceRadio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function winterUseEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to winterUseEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function winterUseEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to winterUseEdit (see GCBO)
@@ -499,9 +447,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function easeEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to easeEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function easeEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to easeEdit (see GCBO)
@@ -515,9 +460,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function overallScoreEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to overallScoreEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function overallScoreEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to overallScoreEdit (see GCBO)
@@ -531,9 +473,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function preslipEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to preslipEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function preslipEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to preslipEdit (see GCBO)
@@ -547,9 +486,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function slipperinessEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to slipperinessEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 % --- Executes during object creation, after setting all properties.
 function slipperinessEdit_CreateFcn(hObject, eventdata, handles)
@@ -564,9 +500,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function thermalEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to thermalEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function thermalEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to thermalEdit (see GCBO)
@@ -580,9 +513,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function fitEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to fitEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function fitEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to fitEdit (see GCBO)
@@ -596,36 +526,20 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function heavinessEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to heavinessEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function heavinessEdit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to heavinessEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 function observerEdit_Callback(hObject, eventdata, handles)
-% hObject    handle to observerEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function observerEdit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to observerEdit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+%% Some other functionalities
 
 function updateSessInfoButton_Callback(hObject, eventdata, handles)
 % hObject    handle to updateSessInfoButton (see GCBO)
@@ -656,9 +570,7 @@ handles.operator.session.setObserver(get(handles.observerEdit, 'String'));
 handles.operator.session.notifyListeners();
 
 function ExportButton_Callback(hObject, eventdata, handles)
-% hObject    handle to ExportButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
 fprintf('Exporting to excel...\n');
 Excel = actxserver ('Excel.Application');
 
@@ -709,5 +621,14 @@ Excel.Quit;
 Excel.delete;
 clear Excel;
 
+function UndoButton_Callback(hObject, eventdata, handles)
+handles.operator = handles.lastState;
+handles.operator.checkMAA(); 
+handles.operator.notifyListeners();
+handles.operator.session.notifyListeners();
+MAAHelperView(handles.operator);
 
+set(handles.UndoButton, 'enable', 'off');
+
+guidata(hObject,handles)  % save changes to handles
 
