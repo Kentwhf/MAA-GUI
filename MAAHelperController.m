@@ -176,7 +176,7 @@ fprintf('--- CURRENT ANGLE: %d ---\n', handles.operator.currAngle);
 % set the curr tested angle before we modify it
 % handles.justTestedAngle = handles.operator.currAngle;
 
-handles.lastState = handles.operator;
+handles.lastState = copy(handles.operator);
 
 handles.operator.recordResults(handles.resultUphill, handles.resultDownhill);
 handles.operator.checkMAA(); 
@@ -187,6 +187,8 @@ handles.operator.adjustAngle(handles.resultUphill, handles.resultDownhill);
 
 % notify the viewer to update the data
 handles.operator.notifyListeners();
+handles.operator.session.notifyListeners();
+handles.operator.session.participant.notifyListeners();
 
 % % notify the viewer to update the data
 % handles.operator.notifyListeners();
@@ -217,7 +219,7 @@ end
 
 % set these as enabled after we found MAA
 if handles.operator.foundDownhill && handles.operator.foundUphill
-    % entry fields
+   % entry fields
    set(handles.preslipEdit, 'enable', 'on');
    set(handles.slipperinessEdit, 'enable', 'on');
    set(handles.thermalEdit, 'enable', 'on');
@@ -622,13 +624,34 @@ Excel.delete;
 clear Excel;
 
 function UndoButton_Callback(hObject, eventdata, handles)
+
+% lastState itself has no data change. Change it manually.
 handles.operator = handles.lastState;
+handles.operator.trialNum = handles.operator.trialNum + 1;
+
+handles.operator.notifyListeners();
+handles.operator.trialNum = handles.operator.trialNum - 1;
+handles.operator.notifyListeners();
+
 handles.operator.checkMAA(); 
+
 handles.operator.notifyListeners();
 handles.operator.session.notifyListeners();
+handles.operator.session.participant.notifyListeners();
+
 MAAHelperView(handles.operator);
+% MAAHelperView(handles.operator.session);
+% MAAHelperView(handles.operator.session.participant);
 
 set(handles.UndoButton, 'enable', 'off');
+
+set(handles.downhillStatusIndic, 'String', '');
+set(handles.uphillStatusIndic, 'String', '');
+set(hObject, 'enable', 'off');
+handles.inputtedDownhill = 0;
+handles.inputtedUphill = 0;
+handles.resultUphill = '*';
+handles.resultDownhill = '*';
 
 guidata(hObject,handles)  % save changes to handles
 

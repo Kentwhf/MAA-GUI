@@ -1,4 +1,4 @@
-classdef Operator < handle
+classdef Operator <  matlab.mixin.Copyable 
     %   Operator - an abstracted tipper operator object (Model)
     %   Tipper properties during the MAA experiment
     %   UML pending... but 'uses' Participant and Session classes
@@ -604,6 +604,7 @@ classdef Operator < handle
             % Convert unknown trial to '*'
             % ivalidEntries = cellfun(@ischar, operator.results);
 
+            
             % Sort the trials by brute force
             trials = [operator.results(:, [1 2]); operator.results(:, [1 5]); operator.results(:, [1 8])];
             % disp(trials);
@@ -611,21 +612,21 @@ classdef Operator < handle
             
             validEntries = (~cellfun('isempty', trials(:, 2)));
             
-            
             trials = trials(validEntries, :);
             
             trials(any(cellfun(@(x) any(isnan(x)),trials),2),:) = [];
             
-            [~,idx] = sort(cell2mat((trials(:,1)))); % sort by the first column
+            [~,idx] = sort(cell2mat((trials(:,2)))); % sort by the first column
             trials = trials(idx,:);   % sort the whole matrix using the sort indices
             disp(trials);
             trials = cell2mat(trials);
             
-            operator.tseriesplot = timeseries(trials(:, 1), trials(:, 2));
-            notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
-            
+            if ~isempty(trials)
+                operator.tseriesplot = timeseries(trials(:, 1), trials(:, 2));
+            end
             operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
                 'Time', operator.trialNum, 'OverwriteFlag', true);
+            notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
             
         end
         
