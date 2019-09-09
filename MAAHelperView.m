@@ -36,6 +36,8 @@ if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
+
+
 if nargout
     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
@@ -67,7 +69,7 @@ handles.listen = event.listener(handles.operator.session.participant, 'dataChang
 guidata(hObject, handles);
 
 % do this when any changed data
-%onChangedTrial(handles, handles.operator);
+onChangedTrial(handles, handles.operator);
 onChangedSession(handles, handles.operator.session);
 onChangedParticipant(handles, handles.operator.session.participant);
 
