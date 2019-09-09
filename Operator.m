@@ -9,6 +9,7 @@ classdef Operator <  matlab.mixin.Copyable
         session  % contains participant and all other session goodies
         currAngle % start at 3!
         timesVisitedAngles  % hashmap of angle -> # times visited
+        nextAngle 
         
         results % table of results for all trails 
         
@@ -62,6 +63,7 @@ classdef Operator <  matlab.mixin.Copyable
             
             % initial angle is 3
             operator.currAngle = 3; 
+            operator.nextAngle = 'N/A'; 
 
             % A container recording times of visted angles 
             initKeys = 0:15;
@@ -83,6 +85,7 @@ classdef Operator <  matlab.mixin.Copyable
             operator.lastTestedAngle = 0;
             operator.lastResultUphill = '*';
             operator.lastResultDownhill = '*';
+            
             
             % for angle plot in MAAHelperView
             operator.tseriesplot = timeseries([], []);
@@ -398,6 +401,9 @@ classdef Operator <  matlab.mixin.Copyable
                     
                 end
             end
+            
+            operator.nextAngle = operator.currAngle;
+            
         end
        
         %% Check if the current angle is bounded below or above by the given angle
@@ -624,8 +630,8 @@ classdef Operator <  matlab.mixin.Copyable
             if ~isempty(trials)
                 operator.tseriesplot = timeseries(trials(:, 1), trials(:, 2));
             end
-            operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
-                'Time', operator.trialNum, 'OverwriteFlag', true);
+%             operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
+%                 'Time', operator.trialNum, 'OverwriteFlag', true);
             notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
             
         end

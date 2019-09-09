@@ -173,6 +173,11 @@ function ConfirmButton_Callback(hObject, eventdata, handles)
 
 fprintf('--- CURRENT ANGLE: %d ---\n', handles.operator.currAngle);
 
+% notify the viewer to update the data
+handles.operator.notifyListeners();
+handles.operator.session.notifyListeners();
+handles.operator.session.participant.notifyListeners();
+
 % set the curr tested angle before we modify it
 % handles.justTestedAngle = handles.operator.currAngle;
 
@@ -184,14 +189,6 @@ handles.operator.checkMAA();
 % decide next angle:
 % implement an if statement to execute this line 
 handles.operator.adjustAngle(handles.resultUphill, handles.resultDownhill);
-
-% notify the viewer to update the data
-handles.operator.notifyListeners();
-handles.operator.session.notifyListeners();
-handles.operator.session.participant.notifyListeners();
-
-% % notify the viewer to update the data
-% handles.operator.notifyListeners();
 
 % Enable Undo
 set(handles.UndoButton, 'enable', 'on');
@@ -627,24 +624,18 @@ function UndoButton_Callback(hObject, eventdata, handles)
 
 % lastState itself has no data change. Change it manually.
 handles.operator = handles.lastState;
-handles.operator.trialNum = handles.operator.trialNum + 1;
-
-handles.operator.notifyListeners();
-handles.operator.trialNum = handles.operator.trialNum - 1;
+% handles.operator.trialNum = handles.operator.trialNum + 1;
+% handles.operator.notifyListeners();
+% handles.operator.trialNum = handles.operator.trialNum - 1;
 handles.operator.notifyListeners();
 
 handles.operator.checkMAA(); 
 
-handles.operator.notifyListeners();
 handles.operator.session.notifyListeners();
-handles.operator.session.participant.notifyListeners();
 
 MAAHelperView(handles.operator);
-% MAAHelperView(handles.operator.session);
-% MAAHelperView(handles.operator.session.participant);
 
 set(handles.UndoButton, 'enable', 'off');
-
 set(handles.downhillStatusIndic, 'String', '');
 set(handles.uphillStatusIndic, 'String', '');
 set(hObject, 'enable', 'off');

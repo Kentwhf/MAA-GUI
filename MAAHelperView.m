@@ -96,11 +96,11 @@ varargout{1} = handles.output;
 function startupWindows(handles)
 FIRST_VISIT = 1;  % since when first open window, we start at 3 degrees and wait for user input, so technically visited once
 % angle information
-set(handles.currAngleWindow, 'String', handles.operator.currAngle);
+set(handles.currAngleWindow, 'String', handles.operator.lastTestedAngle);
 set(handles.timesVisited, 'String', FIRST_VISIT);
 set(handles.trialNumWindow, 'String', handles.operator.trialNum);
 set(handles.upDownWindow, 'String', sprintf('%s | %s', num2str(handles.operator.lastResultUphill), num2str(handles.operator.lastResultDownhill)));
-set(handles.nextAngleWindow, 'String', 'N/A');  % after this listener is notified, all angles have already been adjusted...
+set(handles.nextAngleWindow, 'String', handles.operator.nextAngle);  % after this listener is notified, all angles have already been adjusted...
 
 
 % --- Do this when the thing changes
@@ -112,10 +112,10 @@ end
 
 % angle information
 set(handles.currAngleWindow, 'String', operator.lastTestedAngle);
-set(handles.timesVisited, 'String', operator.timesVisitedAngles(operator.lastTestedAngle));
+set(handles.timesVisited, 'String', operator.timesVisitedAngles(operator.currAngle));
 set(handles.trialNumWindow, 'String', operator.trialNum);
 set(handles.upDownWindow, 'String', sprintf('%s | %s', num2str(operator.lastResultUphill), num2str(operator.lastResultDownhill)));
-set(handles.nextAngleWindow, 'String', operator.currAngle);  % after this listener is notified, all angles have already been adjusted...
+set(handles.nextAngleWindow, 'String', operator.nextAngle);  % after this listener is notified, all angles have already been adjusted...
 
 % found maa's panel
 if operator.foundUphill

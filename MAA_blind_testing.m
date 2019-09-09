@@ -32,9 +32,11 @@ Excel.EnableSound = false;
 
 %% --- Select input ---
 % topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet'; % Change to different folder if needed
-topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet\temp\';
+TOP_LEVEL_DIR = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet\';
 
-TOP_LEVEL_DIR = dir(topLevelFolder);
+topLevelFolder = uigetdir(TOP_LEVEL_DIR);  % choose the date folder
+
+% TOP_LEVEL_DIR = dir(topLevelFolder);
 [allExcelFiles, numExcelFiles] = getAllDatafilePaths(topLevelFolder, TOP_LEVEL_DIR); % a vector of all MAA datafile paths in a given directory
 
 %% -- Load and read files
