@@ -125,7 +125,7 @@ classdef Operator <  matlab.mixin.Copyable
             end
             
             % disp method just for debugging purpose
-            % disp(operator.results);
+            disp(operator.results);
         end
         
         %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees
@@ -614,7 +614,6 @@ classdef Operator <  matlab.mixin.Copyable
             % Sort the trials by brute force
             trials = [operator.results(:, [1 2]); operator.results(:, [1 5]); operator.results(:, [1 8])];
             % disp(trials);
-            
             
             validEntries = (~cellfun('isempty', trials(:, 2)));
             

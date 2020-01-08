@@ -31,11 +31,11 @@ Excel.DisplayAlerts = false;
 Excel.EnableSound = false;
 
 %% --- Select input ---
-% topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet'; % Change to different folder if needed
-TOP_LEVEL_DIR = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet\';
 
+TOP_LEVEL_DIR = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet\';
 topLevelFolder = uigetdir(TOP_LEVEL_DIR);  % choose the date folder
 
+% topLevelFolder = 'U:\Projects\Winter Projects\Kent\WinterLab\MAA data sheet\2019-03-07\'; % Change to different folder if needed
 % TOP_LEVEL_DIR = dir(topLevelFolder);
 [allExcelFiles, numExcelFiles] = getAllDatafilePaths(topLevelFolder, TOP_LEVEL_DIR); % a vector of all MAA datafile paths in a given directory
 
@@ -92,7 +92,7 @@ for file = 1 : numExcelFiles
         
         % Sort the trials by brute force
         trials = [readBuffer.value(:, 2:4); readBuffer.value(:, 5:7); readBuffer.value(:, 8:10)];
-        disp(trials);
+        % disp(trials);
         trials(any(cellfun(@(x) any(isnan(x)),trials),2),:) = [];
         [~,idx] = sort(cell2mat((trials(:,1)))); % sort just the first column
         trials = trials(idx,:);   % sort the whole matrix using the sort indices

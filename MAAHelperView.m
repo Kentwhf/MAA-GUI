@@ -45,7 +45,6 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-
 % --- Executes just before MAAHelperView is made visible.
 function MAAHelperView_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -82,7 +81,6 @@ movegui(handles.figure1, 'west');
 % set current angle stuff
 startupWindows(handles);
 
-
 % --- Outputs from this function are returned to the command line.
 function varargout = MAAHelperView_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -94,14 +92,12 @@ function varargout = MAAHelperView_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 function startupWindows(handles)
-FIRST_VISIT = 1;  % since when first open window, we start at 3 degrees and wait for user input, so technically visited once
 % angle information
 set(handles.currAngleWindow, 'String', handles.operator.lastTestedAngle);
-set(handles.timesVisited, 'String', FIRST_VISIT);
+set(handles.timesVisited, 'String', handles.operator.timesVisitedAngles(handles.operator.currAngle) + 1);
 set(handles.trialNumWindow, 'String', handles.operator.trialNum);
 set(handles.upDownWindow, 'String', sprintf('%s | %s', num2str(handles.operator.lastResultUphill), num2str(handles.operator.lastResultDownhill)));
 set(handles.nextAngleWindow, 'String', handles.operator.nextAngle);  % after this listener is notified, all angles have already been adjusted...
-
 
 % --- Do this when the thing changes
 function onChangedTrial(handles, operator)
@@ -110,9 +106,11 @@ if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
     fprintf('    ---- updating angle: %d\n', operator.currAngle);
 end
 
+handles.operator.notifyListeners();
+
 % angle information
 set(handles.currAngleWindow, 'String', operator.lastTestedAngle);
-set(handles.timesVisited, 'String', operator.timesVisitedAngles(operator.currAngle));
+set(handles.timesVisited, 'String', operator.timesVisitedAngles(operator.currAngle) + 1);
 set(handles.trialNumWindow, 'String', operator.trialNum);
 set(handles.upDownWindow, 'String', sprintf('%s | %s', num2str(operator.lastResultUphill), num2str(operator.lastResultDownhill)));
 set(handles.nextAngleWindow, 'String', operator.nextAngle);  % after this listener is notified, all angles have already been adjusted...
@@ -121,18 +119,35 @@ set(handles.nextAngleWindow, 'String', operator.nextAngle);  % after this listen
 if operator.foundUphill
     set(handles.foundUphillRadio, 'Value', 1);
     set(handles.uphillMAAWindow, 'String', operator.uphillMAA);
+else
+    set(handles.foundUphillRadio, 'Value', 0);
+    set(handles.uphillMAAWindow, 'String', '');
 end
+
 if operator.foundDownhill
     set(handles.foundDownhillRadio, 'Value', 1);
     set(handles.downhillMAAWindow, 'String', operator.downhillMAA);
+else
+    set(handles.foundDownhillRadio, 'Value', 0);
+    set(handles.downhillMAAWindow, 'String', '');    
 end
+
 if operator.firstSlip
-   set(handles.firstSlipWindow, 'String', operator.firstSlipAngle);
+    set(handles.firstSlipWindow, 'String', operator.firstSlipAngle);
+else
+    set(handles.firstSlipWindow, 'String', '');
 end
-% grey out next angle if we found both MAAs
+
+% grey out angle if we found both MAAs
 if operator.foundUphill && operator.foundDownhill
-   set(handles.nextAngleWindow, 'Enable', 'off');
-   set(handles.nextAngleWindow, 'String', 'DONE');
+    set(handles.nextAngleWindow, 'Enable', 'off');
+    set(handles.nextAngleWindow, 'String', 'DONE');
+    set(handles.trialNumWindow, 'String', 'N/A');
+    set(handles.timesVisited, 'String', operator.timesVisitedAngles(operator.currAngle));
+
+else
+    set(handles.nextAngleWindow, 'Enable', 'on');
+    set(handles.nextAngleWindow, 'String', '');
 end
 
 % plot time series
@@ -144,33 +159,19 @@ newXTicks = 1:25;
 set(handles.AnglePlot,'YTick',newYTicks);%,'YTickLabel',num2str(newYTicks))
 set(handles.AnglePlot,'XTick',newXTicks);%,'XTickLabel',num2str(newYTicks))
 
-
 function onChangedSession(handles, session)
 %Depending on tag fed to GUI, select how to plot
 fprintf('    ---- updating session info...\n');
 strrep = session.toString();
 set(handles.sessionSummary, 'String', strrep);
 
-
 function onChangedParticipant(handles, participant)
 fprintf('    ---- updating participant info...\n');
 strrep = participant.toString();
 set(handles.participantSummary, 'String', strrep);
 
-
 % --- Executes on button press in foundDownhillRadio.
 function foundDownhillRadio_Callback(hObject, eventdata, handles)
-% hObject    handle to foundDownhillRadio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of foundDownhillRadio
-
 
 % --- Executes on button press in foundUphillRadio.
 function foundUphillRadio_Callback(hObject, eventdata, handles)
-% hObject    handle to foundUphillRadio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of foundUphillRadio

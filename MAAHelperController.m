@@ -164,12 +164,11 @@ checkResultsInput(handles);
 guidata(hObject,handles)  % save changes to handles
 
 %% CONFRIM RESULTS BUTTON
-% --- Executes on button press in ConfirmButton.
+% --- Executes on button press in Button.
 function ConfirmButton_Callback(hObject, eventdata, handles)
 % hObject    handle to ConfirmButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 
 fprintf('--- CURRENT ANGLE: %d ---\n', handles.operator.currAngle);
 
@@ -199,11 +198,18 @@ if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
     handles.operator.notifyListeners();
 end 
 
+handles.operator.notifyListeners();
+
 % disable the uphill/downhill panels if we found an MAA for that dir
 if handles.operator.foundUphill
     set(handles.uphillFailButton, 'enable', 'off');
     set(handles.uphillPassButton, 'enable', 'off');
     set(handles.uphillStatusIndic, 'String', 'FOUND MAA');
+    handles.resultUphill = '*';
+else 
+    set(handles.uphillFailButton, 'enable', 'on');
+    set(handles.uphillPassButton, 'enable', 'on');
+    set(handles.uphillStatusIndic, 'String', '');
     handles.resultUphill = '*';
 end
 
@@ -211,6 +217,11 @@ if handles.operator.foundDownhill
     set(handles.downhillFailButton, 'enable', 'off');
     set(handles.downhillPassButton, 'enable', 'off');
     set(handles.downhillStatusIndic, 'String', 'FOUND MAA');
+    handles.resultDownhill = '*';
+else 
+    set(handles.downhillFailButton, 'enable', 'on');
+    set(handles.downhillPassButton, 'enable', 'on');
+    set(handles.downhillStatusIndic, 'String', '');
     handles.resultDownhill = '*';
 end
 
@@ -226,6 +237,8 @@ if handles.operator.foundDownhill && handles.operator.foundUphill
    set(handles.easeEdit, 'enable', 'on');
    set(handles.overallScoreEdit, 'enable', 'on');
    set(handles.ExportButton, 'enable', 'on');  % allow to export
+   
+   set(handles.ConfirmButton, 'enable', 'off');
    
    % text fields
    set(handles.slipperinessTag, 'enable', 'on');
@@ -471,7 +484,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-function preslipEdit_Callback(hObject, eventdata, handles)
+function preslipEdit_Callback(hObject, ~, handles)
 
 function preslipEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to preslipEdit (see GCBO)
@@ -624,15 +637,10 @@ function UndoButton_Callback(hObject, eventdata, handles)
 
 % lastState itself has no data change. Change it manually.
 handles.operator = handles.lastState;
-% handles.operator.trialNum = handles.operator.trialNum + 1;
-% handles.operator.notifyListeners();
-% handles.operator.trialNum = handles.operator.trialNum - 1;
 handles.operator.notifyListeners();
-
 handles.operator.checkMAA(); 
-
 handles.operator.session.notifyListeners();
-
+handles.operator.timesVisitedAngles(handles.operator.currAngle) = handles.operator.timesVisitedAngles(handles.operator.currAngle) - 1;
 MAAHelperView(handles.operator);
 
 set(handles.UndoButton, 'enable', 'off');
@@ -643,6 +651,32 @@ handles.inputtedDownhill = 0;
 handles.inputtedUphill = 0;
 handles.resultUphill = '*';
 handles.resultDownhill = '*';
+
+set(handles.ConfirmButton, 'enable', 'on');
+
+if handles.operator.foundUphill
+    set(handles.uphillFailButton, 'enable', 'off');
+    set(handles.uphillPassButton, 'enable', 'off');
+    set(handles.uphillStatusIndic, 'String', 'FOUND MAA');
+    handles.resultUphill = '*';
+else 
+    set(handles.uphillFailButton, 'enable', 'on');
+    set(handles.uphillPassButton, 'enable', 'on');
+    set(handles.uphillStatusIndic, 'String', '');
+    handles.resultUphill = '*';
+end
+
+if handles.operator.foundDownhill
+    set(handles.downhillFailButton, 'enable', 'off');
+    set(handles.downhillPassButton, 'enable', 'off');
+    set(handles.downhillStatusIndic, 'String', 'FOUND MAA');
+    handles.resultDownhill = '*';
+else 
+    set(handles.downhillFailButton, 'enable', 'on');
+    set(handles.downhillPassButton, 'enable', 'on');
+    set(handles.downhillStatusIndic, 'String', '');
+    handles.resultDownhill = '*';
+end
 
 guidata(hObject,handles)  % save changes to handles
 
