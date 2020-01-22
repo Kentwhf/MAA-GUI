@@ -99,13 +99,13 @@ handleOperator = handles.operator;
 fprintf('Inputted uphill and downhill: %d | %d\n', handles.inputtedUphill, handles.inputtedDownhill);
 if ~handleOperator.foundUphill && ~handleOperator.foundDownhill && handles.inputtedUphill && handles.inputtedDownhill
     set(handles.ConfirmButton, 'enable', 'on');
-    %fprintf('ready to enable\n');
+    
 elseif ~handleOperator.foundUphill && handleOperator.foundDownhill && handles.inputtedUphill
     set(handles.ConfirmButton, 'enable', 'on');
-    %fprintf('ready to enable\n');
+    
 elseif ~handleOperator.foundDownhill && handleOperator.foundUphill && handles.inputtedDownhill
     set(handles.ConfirmButton, 'enable', 'on');
-    %fprintf('ready to enable\n');
+    
 end
 
 %% UPHILL RESULTS BUTTONS
@@ -118,9 +118,7 @@ set(handles.uphillStatusIndic, 'String', 'PASS');
 handles.inputtedUphill = 1;
 handles.resultUphill = 1;
 
-
 checkResultsInput(handles);
-%fprintf('PRESSED UPHILL PASS\n');
 guidata(hObject,handles)  % save changes to handles
 
 % --- Executes on button press in uphillFailButton.
@@ -133,7 +131,6 @@ handles.inputtedUphill = 1;
 handles.resultUphill = 0;
 
 checkResultsInput(handles);
-%fprintf('PRESSED UPHILL F\n');
 guidata(hObject,handles)  % save changes to handles
 
 %% DOWNHILL RESULTS BUTTONS
@@ -147,7 +144,6 @@ handles.inputtedDownhill = 1;
 handles.resultDownhill = 1;
 
 checkResultsInput(handles);
-%fprintf('PRESSED DOWNHILL PASS\n');
 guidata(hObject,handles)  % save changes to handles
 
 % --- Executes on button press in downhillFailButton.
@@ -160,7 +156,6 @@ handles.inputtedDownhill = 1;
 handles.resultDownhill = 0;
 
 checkResultsInput(handles);
-%fprintf('PRESSED DOWNHILL F\n');
 guidata(hObject,handles)  % save changes to handles
 
 %% CONFRIM RESULTS BUTTON
@@ -174,11 +169,8 @@ fprintf('--- CURRENT ANGLE: %d ---\n', handles.operator.currAngle);
 
 % notify the viewer to update the data
 handles.operator.notifyListeners();
-handles.operator.session.notifyListeners();
-handles.operator.session.participant.notifyListeners();
-
-% set the curr tested angle before we modify it
-% handles.justTestedAngle = handles.operator.currAngle;
+% handles.operator.session.notifyListeners();
+% handles.operator.session.participant.notifyListeners();
 
 handles.lastState = copy(handles.operator);
 
@@ -186,7 +178,6 @@ handles.operator.recordResults(handles.resultUphill, handles.resultDownhill);
 handles.operator.checkMAA(); 
 
 % decide next angle:
-% implement an if statement to execute this line 
 handles.operator.adjustAngle(handles.resultUphill, handles.resultDownhill);
 
 % Enable Undo
@@ -278,12 +269,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function participantID_Callback(hObject, eventdata, handles)
-% hObject    handle to participantID (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Need to parse data 
-% Hints: get(hObject,'String') returns contents of participantID as text
-%        str2double(get(hObject,'String')) returns contents of participantID as a double
 
 function partiSexPanel_SelectionChangeFcn(hObject, eventdata, handles)
 % Need to parse data 
@@ -618,7 +603,7 @@ currentExcelRow = Excel.ActiveSheet.UsedRange.Rows.Count + 1;
 % write to the file
 % write data to the excel sheet
 [rows, cols] = size(excelWriteCells);
-cellReference = sprintf('C%d:%s%d', currentExcelRow, xlscol(cols + 2), currentExcelRow + rows - 1);
+cellReference = sprintf('C%d:%s%d', currentExcelRow, xlscol(cols + 2), currentExcelRow + rows - 2);
 
 xlswrite1(SPREADSHEET_SESSION, excelWriteCells, EXPORTED_SHEET, cellReference);
 
@@ -639,7 +624,7 @@ function UndoButton_Callback(hObject, eventdata, handles)
 handles.operator = handles.lastState;
 handles.operator.notifyListeners();
 handles.operator.checkMAA(); 
-handles.operator.session.notifyListeners();
+% handles.operator.session.notifyListeners();
 handles.operator.timesVisitedAngles(handles.operator.currAngle) = handles.operator.timesVisitedAngles(handles.operator.currAngle) - 1;
 MAAHelperView(handles.operator);
 
@@ -678,5 +663,9 @@ else
     handles.resultDownhill = '*';
 end
 
+sprintf(newline);
+fprintf('\n');
+fprintf('---- UNDO\n');
+disp(handles.operator.results)
 guidata(hObject,handles)  % save changes to handles
 

@@ -1,9 +1,17 @@
 classdef Operator <  matlab.mixin.Copyable 
     %   Operator - an abstracted tipper operator object (Model)
     %   Tipper properties during the MAA experiment
-    %   UML pending... but 'uses' Participant and Session classes
+    %   UML pending... but 'uses' Participant and Session classes which are
+    %   more info-based 
+    
     %   Initally created by Norman
     %   Modified and improved by Kent 
+    
+    %   Very first script stored in I:\winterlab\footwear database\old files\AutomatedDigitizing\GUI\gui
+    %   Coding logic embedded in the GUIs is messy, pending to be restructured and refactored
+    %   Class Operator should be the core algorithm being rewritten for MAA testing, if the testing protocol is changed
+    %   The GUIs are one viewer and one controller for display purpose, but they have things related to class Operator
+    %   Such dependency should be eliminated
     
     properties
         session  % contains participant and all other session goodies
@@ -86,13 +94,12 @@ classdef Operator <  matlab.mixin.Copyable
             operator.lastResultUphill = '*';
             operator.lastResultDownhill = '*';
             
-            
             % for angle plot in MAAHelperView
             operator.tseriesplot = timeseries([], []);
             
-            % The underlying MAA table whose first column as angle 
+            % The underlying MAA table whose first column as angle index
             % Table is in form of cell matrix, as inputs have different data types, which are 0, 1 amd '*'
-            % May consider using another integer value to replace '*'
+            % May consider using another integer value to replace '*' 
             % Then Table can be treated as general matrix of integers
             % Syntax might be cleaner, and reduce time complexity this way?
             operator.results = cell(16,10);
@@ -550,9 +557,7 @@ classdef Operator <  matlab.mixin.Copyable
         %% Helper - searchBoundedBelowAngle -> find the greatest angle that has two 1s
         function [foundBoundedBelowAngle,result] = searchBoundedBelowAngle(operator, direction)
             
-            % hideous implementation
-            % Need to refactor
-            
+            % Hideous implementation
             result = 0;
             foundBoundedBelowAngle = 0; % A flag if we don't find such an angle
             trialNumCols = [2, 5, 8]; 
@@ -602,18 +607,9 @@ classdef Operator <  matlab.mixin.Copyable
         %% broadcast to any listeners that we modified operator's fields
         function notifyListeners(operator)
             % add the updated angle to the time series
-            % operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
-                % 'Time', operator.trialNum, 'OverwriteFlag', true);
-            
-            % notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
 
-            % Convert unknown trial to '*'
-            % ivalidEntries = cellfun(@ischar, operator.results);
-
-            
             % Sort the trials by brute force
             trials = [operator.results(:, [1 2]); operator.results(:, [1 5]); operator.results(:, [1 8])];
-            % disp(trials);
             
             validEntries = (~cellfun('isempty', trials(:, 2)));
             
@@ -623,14 +619,12 @@ classdef Operator <  matlab.mixin.Copyable
             
             [~,idx] = sort(cell2mat((trials(:,2)))); % sort by the first column
             trials = trials(idx,:);   % sort the whole matrix using the sort indices
-            disp(trials);
+            
             trials = cell2mat(trials);
             
             if ~isempty(trials)
                 operator.tseriesplot = timeseries(trials(:, 1), trials(:, 2));
             end
-%             operator.tseriesplot = addsample(operator.tseriesplot, 'Data', operator.currAngle, ...
-%                 'Time', operator.trialNum, 'OverwriteFlag', true);
             notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
             
         end

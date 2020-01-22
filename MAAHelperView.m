@@ -72,9 +72,6 @@ onChangedTrial(handles, handles.operator);
 onChangedSession(handles, handles.operator.session);
 onChangedParticipant(handles, handles.operator.session.participant);
 
-% UIWAIT makes MAAHelperView wait for user response (see UIRESUME)clc
-% uiwait(handles.figure1);
-
 % move to left of screen
 movegui(handles.figure1, 'west');
 
@@ -102,9 +99,9 @@ set(handles.nextAngleWindow, 'String', handles.operator.nextAngle);  % after thi
 % --- Do this when the thing changes
 function onChangedTrial(handles, operator)
 % plot and print out next angle and other info
-if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
-    fprintf('    ---- updating angle: %d\n', operator.currAngle);
-end
+% if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
+%     fprintf('    ---- updating angle: %d\n', operator.currAngle);
+% end
 
 handles.operator.notifyListeners();
 
@@ -152,8 +149,6 @@ end
 
 % plot time series
 plot(handles.AnglePlot, operator.tseriesplot.Time, operator.tseriesplot.Data, '-*');
-%xticks(0:25);
-%yticks(0:20);
 newYTicks = 0:20;
 newXTicks = 1:25;
 set(handles.AnglePlot,'YTick',newYTicks);%,'YTickLabel',num2str(newYTicks))
