@@ -22,7 +22,7 @@ function varargout = MAAHelperController(varargin)
 
 % Edit the above text to modify the response to help MAAHelperController
 
-% Last Modified by GUIDE v2.5 05-Sep-2019 11:17:55
+% Last Modified by GUIDE v2.5 22-Jan-2020 14:07:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -251,6 +251,7 @@ handles.inputtedUphill = 0;
 handles.resultUphill = '*';
 handles.resultDownhill = '*';
 
+MAAHelperView(handles.operator);
 guidata(hObject,handles)  % save changes to handles
 
 %% PARTICIPANT INFO
@@ -405,7 +406,6 @@ end
 
 function shoeIDEdit_Callback(hObject, eventdata, handles)
 
-% --- Executes during object creation, after setting all properties.
 function shoeIDEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to shoeIDEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -417,7 +417,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-% --- Executes when selected object is changed in iceConditionPanel.
 function iceConditionPanel_SelectionChangeFcn(hObject, eventdata, handles)
 str = get(hObject, 'String');
 if strcmp(str, 'dryIceRadio')
@@ -484,7 +483,6 @@ end
 
 function slipperinessEdit_Callback(hObject, eventdata, handles)
 
-% --- Executes during object creation, after setting all properties.
 function slipperinessEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to slipperinessEdit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -607,8 +605,6 @@ cellReference = sprintf('C%d:%s%d', currentExcelRow, xlscol(cols + 2), currentEx
 
 xlswrite1(SPREADSHEET_SESSION, excelWriteCells, EXPORTED_SHEET, cellReference);
 
-% xlswrite(SPREADSHEET_SESSION, excelWriteCells, 'SessionData', 'A3:AE3');
-
 % Save our changes to file
 invoke(Excel.ActiveWorkbook,'Save'); 
 Workbook.Close(false);
@@ -678,3 +674,8 @@ fprintf('---- UNDO\n');
 disp(handles.operator.results)
 guidata(hObject,handles)  % save changes to handles
 
+function newSessionButton_Callback(hObject, eventdata, handles)
+% pretty much copied from opening function 
+% Calling directly may involves dependency from arguments
+% Choose default command line output for MAAHelperController
+MAAHelperController_OpeningFcn(hObject, eventdata, handles)

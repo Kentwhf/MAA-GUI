@@ -110,7 +110,7 @@ set(handles.currAngleWindow, 'String', operator.lastTestedAngle);
 set(handles.timesVisited, 'String', operator.timesVisitedAngles(operator.currAngle) + 1);
 set(handles.trialNumWindow, 'String', operator.trialNum);
 set(handles.upDownWindow, 'String', sprintf('%s | %s', num2str(operator.lastResultUphill), num2str(operator.lastResultDownhill)));
-set(handles.nextAngleWindow, 'String', operator.nextAngle);  % after this listener is notified, all angles have already been adjusted...
+set(handles.nextAngleWindow, 'String', operator.currAngle);  % after this listener is notified, all angles have already been adjusted...
 
 % found maa's panel
 if operator.foundUphill
