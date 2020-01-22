@@ -578,7 +578,7 @@ Excel.EnableSound = false;
 
 % Store the data matrix somewhere  
 % Undo button in the future 
-SPREADSHEET_SESSION = 'U:\Projects\Winter Projects\Kent\GUI\MAA-GUI\exported_session.xlsx'; 
+SPREADSHEET_SESSION = pwd + '\exported_session.xlsx'; 
 excelWriteCells = handles.operator.exportDataCells;
 
 if ~exist(SPREADSHEET_SESSION, 'file')
@@ -617,6 +617,15 @@ Workbook.Close(false);
 Excel.Quit;
 Excel.delete;
 clear Excel;
+
+% Save a copy of MAA digitized sheet 
+dataFolder = 'K:\winterlab\data\MAA digitized sheet\' + date; 
+if ~exist(dataFolder, 'dir')
+       mkdir(dataFolder);
+sheetName = handles.operator.session.footwearID + '_' + handles.operator.session.participant.ID + ...
+    + '_' + handles.operator.session.walkway;
+save(dataFolder + '.mat', handles.operator.results);
+end
 
 function UndoButton_Callback(hObject, eventdata, handles)
 
