@@ -70,10 +70,6 @@ handles.resultDownhill = '*';
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes MAAHelperController wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
-MAAHelperView(handles.operator);
-
 % handles
 movegui(handles.figure1, 'east');
 
@@ -82,6 +78,16 @@ handles.lastState = NaN;
 
 % Undo
 set(handles.UndoButton, 'enable', 'off');
+
+set(handles.downhillFailButton, 'enable', 'on');
+set(handles.downhillPassButton, 'enable', 'on');
+set(handles.uphillFailButton, 'enable', 'on');
+set(handles.uphillPassButton, 'enable', 'on');
+set(handles.ConfirmButton, 'enable', 'off');
+
+% UIWAIT makes MAAHelperController wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+MAAHelperView(handles.operator);
 
 % --- Outputs from this function are returned to the command line.
 function varargout = MAAHelperController_OutputFcn(hObject, eventdata, handles) 
@@ -168,10 +174,7 @@ function ConfirmButton_Callback(hObject, eventdata, handles)
 fprintf('--- CURRENT ANGLE: %d ---\n', handles.operator.currAngle);
 
 % notify the viewer to update the data
-handles.operator.notifyListeners();
-% handles.operator.session.notifyListeners();
-% handles.operator.session.participant.notifyListeners();
-
+% handles.operator.notifyListeners();
 handles.lastState = copy(handles.operator);
 
 handles.operator.recordResults(handles.resultUphill, handles.resultDownhill);
@@ -186,7 +189,7 @@ set(handles.UndoButton, 'enable', 'on');
 if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
     fprintf('    NEXT ANGLE: %d\n', handles.operator.currAngle);
     % notify the viewer to update the data
-    handles.operator.notifyListeners();
+    % handles.operator.notifyListeners();
 end 
 
 handles.operator.notifyListeners();
@@ -253,6 +256,7 @@ handles.resultDownhill = '*';
 
 MAAHelperView(handles.operator);
 guidata(hObject,handles)  % save changes to handles
+checkResultsInput(handles);
 
 %% PARTICIPANT INFO
 % --- A bunch of listeners and their call back functions
@@ -405,6 +409,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function shoeIDEdit_Callback(hObject, eventdata, handles)
+
 
 function shoeIDEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to shoeIDEdit (see GCBO)
@@ -576,7 +581,7 @@ Excel.EnableSound = false;
 
 % Store the data matrix somewhere  
 % Undo button in the future 
-SPREADSHEET_SESSION = pwd + '\exported_session.xlsx'; 
+SPREADSHEET_SESSION = strcat(pwd, '\exported_session.xlsx'); 
 excelWriteCells = handles.operator.exportDataCells;
 
 if ~exist(SPREADSHEET_SESSION, 'file')
@@ -601,7 +606,7 @@ currentExcelRow = Excel.ActiveSheet.UsedRange.Rows.Count + 1;
 % write to the file
 % write data to the excel sheet
 [rows, cols] = size(excelWriteCells);
-cellReference = sprintf('C%d:%s%d', currentExcelRow, xlscol(cols + 2), currentExcelRow + rows - 2);
+cellReference = sprintf('C%d:AG%d', currentExcelRow, currentExcelRow);
 
 xlswrite1(SPREADSHEET_SESSION, excelWriteCells, EXPORTED_SHEET, cellReference);
 
@@ -615,13 +620,16 @@ Excel.delete;
 clear Excel;
 
 % Save a copy of MAA digitized sheet 
-dataFolder = 'K:\winterlab\data\MAA digitized sheet\' + date; 
+dataFolder = strcat('K:\winterlab\data\MAA digitized sheet\', date, '\'); 
 if ~exist(dataFolder, 'dir')
        mkdir(dataFolder);
-sheetName = handles.operator.session.footwearID + '_' + handles.operator.session.participant.ID + ...
-    + '_' + handles.operator.session.walkway;
-save(dataFolder + '.mat', handles.operator.results);
 end
+sheetName = strcat(handles.operator.session.footwearID, '_', handles.operator.session.participant.ID, ...
+            '_' , handles.operator.session.walkway);
+sheetName = strcat('K:\winterlab\data\MAA digitized sheet\', date, '\', sheetName);
+        
+MAAResults = handles.operator.results;
+save(sheetName, 'MAAResults');
 
 function UndoButton_Callback(hObject, eventdata, handles)
 
@@ -629,7 +637,6 @@ function UndoButton_Callback(hObject, eventdata, handles)
 handles.operator = handles.lastState;
 handles.operator.notifyListeners();
 handles.operator.checkMAA(); 
-% handles.operator.session.notifyListeners();
 handles.operator.timesVisitedAngles(handles.operator.currAngle) = handles.operator.timesVisitedAngles(handles.operator.currAngle) - 1;
 MAAHelperView(handles.operator);
 
@@ -641,8 +648,6 @@ handles.inputtedDownhill = 0;
 handles.inputtedUphill = 0;
 handles.resultUphill = '*';
 handles.resultDownhill = '*';
-
-set(handles.ConfirmButton, 'enable', 'on');
 
 if handles.operator.foundUphill
     set(handles.uphillFailButton, 'enable', 'off');
@@ -679,3 +684,4 @@ function newSessionButton_Callback(hObject, eventdata, handles)
 % Calling directly may involves dependency from arguments
 % Choose default command line output for MAAHelperController
 MAAHelperController_OpeningFcn(hObject, eventdata, handles)
+set(handles.confirmButton, 'enable', 'on');

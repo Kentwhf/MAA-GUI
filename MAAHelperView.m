@@ -77,6 +77,11 @@ movegui(handles.figure1, 'west');
 
 % set current angle stuff
 startupWindows(handles);
+% fix next angle bug
+if handles.operator.foundUphill && handles.operator.foundDownhill
+    set(handles.nextAngleWindow, 'Enable', 'off');
+    set(handles.nextAngleWindow, 'String', 'DONE');
+end
 
 % --- Outputs from this function are returned to the command line.
 function varargout = MAAHelperView_OutputFcn(hObject, eventdata, handles) 
@@ -98,12 +103,6 @@ set(handles.nextAngleWindow, 'String', handles.operator.nextAngle);  % after thi
 
 % --- Do this when the thing changes
 function onChangedTrial(handles, operator)
-% plot and print out next angle and other info
-% if ~handles.operator.foundUphill || ~handles.operator.foundDownhill
-%     fprintf('    ---- updating angle: %d\n', operator.currAngle);
-% end
-
-handles.operator.notifyListeners();
 
 % angle information
 set(handles.currAngleWindow, 'String', operator.lastTestedAngle);
