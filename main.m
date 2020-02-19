@@ -39,12 +39,15 @@
 % if operator.checkInput(resultUphill, resultDownhill, angle):
 %   if Both MAA found:
 %       return 
-%       
 %   else:
 %       % where 
 %       operator.recordResults()
 %       operator.checkMAA()
 % else:
-%       ask for input again
+%   ask for input again
 %   
 % -----------------------------------------------------------------------
+
+
+
+

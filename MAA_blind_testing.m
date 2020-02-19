@@ -57,9 +57,7 @@ for file = 1 : numExcelFiles
     
     % Get the number of worksheets in the source datasheet file
     numberOfSourceSheets = Worksheets.Count;
-    %fprintf('      --> Num sheets: %d\n', numberOfSourceSheets);
-    
-    % Collection matrix for all data IN A SINGLE FILE to write to file
+   
     datafileMatrix = {};
     
     sheetsEmpty = [0 0 0 0 0];
@@ -98,7 +96,7 @@ for file = 1 : numExcelFiles
         trials = trials(idx,:);   % sort the whole matrix using the sort indices
       
         % Testing model
-        operator = Operator(session);
+        operator = Operator();
         for trialNum = 1 : length(trials)
             upResult = trials{trialNum, 2};
             downResult = trials{trialNum, 3};
@@ -110,26 +108,11 @@ for file = 1 : numExcelFiles
             end
             operator.recordResults(upResult, downResult);
             operator.adjustAngle(upResult, downResult);
-            operator.checkMAA();
         end
         
         % Get table
         newline;
         fprintf('\n');
-        
-%         for i=operator.results
-%             a=cell{i};
-%             ind = find(a=='*'); %(example conditions put your own)
-%             a(ind) = -1;     
-%             cell{i} = a;
-%         end
-
-%         na = find(isequal(operator.results, '*'));
-%         disp(na);
-%         operator.results(na) = {-1};
-        
-%         dataSheet = readBuffer.value(1:16, 1:10);
-%         dataSheet(any(cellfun(@(x) any(isnan(x)),dataSheet))) = [];
 
         % Remove all missing values to NaN 
         invalidEntries = cellfun(@ischar, operator.results);
@@ -150,9 +133,6 @@ for file = 1 : numExcelFiles
         cell_DOWNMAA = get(Excel.ActiveSheet, 'Range', DOWNHILL_MAA_CELL);
         upMAA = cell_UPMAA.value;
         downMAA = cell_DOWNMAA.value;
-%         if isnan(upMAA) || isnan(downMAA)
-%             [upMAA, downMAA] = findMAA(myDataRetrieved);
-%         end
 
         operator.checkMAA;
         expectedUp = upMAA;
@@ -171,15 +151,6 @@ for file = 1 : numExcelFiles
             files = rmmissing(files);
         end
         
-%         if obtainedDown ~= expectedDown
-%             counter = counter + 1;
-%         end
-
-        
-        
-%         assert(obtainedUp == expectedUp, 'FAILED: obtained up MAA did not match expected!');
-%         assert(obtainedDown == expectedDown, 'FAILED: obtained down MAA did not match expected!');
-
         fprintf('============================================\n\n');
 
     end

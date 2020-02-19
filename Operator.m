@@ -1,8 +1,6 @@
 classdef Operator <  matlab.mixin.Copyable 
     %   Operator - an abstracted tipper operator object (Model)
     %   Tipper properties during the MAA experiment
-    %   UML pending... but 'uses' Participant and Session classes which are
-    %   more info-based 
     
     %   Initally created by Norman
     %   Modified and improved by Kent 
@@ -14,10 +12,10 @@ classdef Operator <  matlab.mixin.Copyable
     %   Such dependency should be eliminated
     
     properties
-        session  % contains participant and all other session goodies
+        % session  % contains participant and all other session goodies
         currAngle % start at 3!
-        timesVisitedAngles  % hashmap of angle -> # times visited
-        nextAngle 
+        timesVisitedAngles  % hash map of angle -> # times visited
+        predictedAngle % Suggested angle to go
         
         results % table of results for all trails 
         
@@ -30,33 +28,28 @@ classdef Operator <  matlab.mixin.Copyable
         trialNum  % record trial number
         firstSlip % first slip flag
         firstSlipAngle % where the first slip was located
-        lastTestedAngle % the angle where we just tested prior to moving
+        lastTestedAngle % the last angle where we just tested 
         lastResultUphill % previously visited angle for uphill
         lastResultDownhill % previously visited angle for downhill
         
-        tseriesplot % container for time series data
-    end
-    
-    events
-        dataChanged % The exposed data has changed
-        selecterror % An error occurred when selecting values 
+        % tseriesplot % container for time series data
     end
     
     properties(Constant)
         % Some constant properties(fields), not often used, might delete later  
         
-        % physical constraints
-        MAX_ANGLE=15  % physical maximum tipper angle
-        MIN_ANGLE=0  % minimum angle for the tipper
-        
-        % moving the tipper
-        INCREMENT=1  % increase/decrease by 1 degree as a step
-        INITIAL_INCREMENT=2  % prior to first slip, increment by 2 degrees
-        
-        MAX_VISITS=3  % max number of visited per angle
-        PASS_THRESHHOLD=2  % 2 is passes at an angle is considered a potential MAA canditate/lower bound
-        
-        INITIAL_ANGLE=3  % the first tipper angle starts at 3 degrees
+%         % physical constraints
+%         MAX_ANGLE=15  % physical maximum tipper angle
+%         MIN_ANGLE=0  % minimum angle for the tipper
+%         
+%         % moving the tipper
+%         INCREMENT=1  % increase/decrease by 1 degree as a step
+%         INITIAL_INCREMENT=2  % prior to first slip, increment by 2 degrees
+%         
+%         MAX_VISITS=3  % max number of visited per angle
+%         PASS_THRESHHOLD=2  % 2 is passes at an angle is considered a potential MAA canditate/lower bound
+%         
+%         INITIAL_ANGLE=3  % the first tipper angle starts at 3 degrees
         
         % directions
         UP='UP'  % up direction macro
@@ -65,13 +58,13 @@ classdef Operator <  matlab.mixin.Copyable
     
     methods
         %% Constructor, take in session object info
-        function operator = Operator(session)
+        function operator = Operator()
             % operator takes a session object to initialize
-            operator.session = session;
+            % operator.session = session;
             
             % initial angle is 3
             operator.currAngle = 3; 
-            operator.nextAngle = 'N/A'; 
+            operator.predictedAngle = -1; 
 
             % A container recording times of visted angles 
             initKeys = 0:15;
@@ -95,7 +88,7 @@ classdef Operator <  matlab.mixin.Copyable
             operator.lastResultDownhill = '*';
             
             % for angle plot in MAAHelperView
-            operator.tseriesplot = timeseries([], []);
+            % operator.tseriesplot = timeseries([], []);
             
             % The underlying MAA table whose first column as angle index
             % Table is in form of cell matrix, as inputs have different data types, which are 0, 1 amd '*'
@@ -409,7 +402,7 @@ classdef Operator <  matlab.mixin.Copyable
                 end
             end
             
-            operator.nextAngle = operator.currAngle;
+            operator.predictedAngle = operator.currAngle;
             
         end
        
@@ -604,38 +597,52 @@ classdef Operator <  matlab.mixin.Copyable
             end
         end
         
-        %% broadcast to any listeners that we modified operator's fields
-        function notifyListeners(operator)
-            % add the updated angle to the time series
-
-            % Sort the trials by brute force
-            trials = [operator.results(:, [1 2]); operator.results(:, [1 5]); operator.results(:, [1 8])];
+        %% checks if input received are valid
+        function result = checkInput(operator, currAngle, resultUphill, resultDownhill)
+            % Case 1: MAAs all found
+            % No need to proceed further, and print MAAs 
             
-            validEntries = (~cellfun('isempty', trials(:, 2)));
+            % Case 2: Neither MAA is found 
+            % Require both inputs 
+            % Check if move to the suggested angle
             
-            trials = trials(validEntries, :);
+            % Case 3: only one MAA is found 
+            % Process one input and mark the other one as asterisk
+            % Check if move to the suggested angle
             
-            trials(any(cellfun(@(x) any(isnan(x)),trials),2),:) = [];
-            
-            [~,idx] = sort(cell2mat((trials(:,2)))); % sort by the first column
-            trials = trials(idx,:);   % sort the whole matrix using the sort indices
-            
-            trials = cell2mat(trials);
-            
-            if ~isempty(trials)
-                operator.tseriesplot = timeseries(trials(:, 1), trials(:, 2));
+            result = 1;
+            if operator.foundUphill && operaotr.foundDownhill
+                fprintf('\nBoth MAAs found. UpMAA = %d, DownMAA = %d\n', operator.uphillMAA, operaor.downhillMAA);
+                return
+            end    
+               
+            if ~operator.foundUphill && ~operaotr.foundDownhill
+                if operator.predictedAngle == currAngle && (resultUphill ~= '*' && resultDownhill ~= '*')
+                    operator.recordResults(resultUphill, resultDownhill);
+                    operator.adjustAngle(resultUphill, resultDownhill); 
+                    return
+                end
             end
-            notify(operator,'dataChanged'); %Notify event (and anything listening), that the selected data has changed
             
-        end
-        
-        %% Export the data into rows for an excel spreadsheet
-        function sessionData = exportDataCells(operator)
-            p = operator.session.participant;
-            s = operator.session;
+            if operator.foundUphill && ~operaotr.foundDownhill
+                if operator.predictedAngle == currAngle && resultDownhill ~= '*'
+                    operator.recordResults(resultUphill, resultDownhill);
+                    operator.adjustAngle(resultUphill, resultDownhill);
+                    return 
+                end
+            end
             
-            sessionData = {p.ID p.ID 'N/A' 'N/A' 'N/A' s.footwearID p.sex p.size 'N/A' s.walkway 'N/A' '' operator.uphillMAA operator.downhillMAA operator.firstSlipAngle ...
-                s.preslip s.slipperiness s.thermal s.fit s.heaviness s.overall s.easeWearing s.useInWinter 'N/A' s.observer 'N/A' s.date s.time s.airTemp s.iceTemp s.humidity};
+            if ~operator.foundUphill && operaotr.foundDownhill
+                if operator.predictedAngle == currAngle && resultUphill ~= '*'
+                    operator.recordResults(resultUphill, resultDownhill);
+                    operator.adjustAngle(resultUphill, resultDownhill);
+                    return 
+                end
+            end
+             
+            disp('\nCheck your input\n')
+            result = 0;
+            return
         end
        
     end
