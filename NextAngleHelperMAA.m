@@ -72,61 +72,51 @@ operator = Operator();
 % trial1 = 1 1 @ 3
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults(1, 1);
-operator.checkMAA();
 operator.adjustAngle(1, 1)
 
 % trial2 = 1 1 @ 5
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults(1, 1);
-operator.checkMAA();
 operator.adjustAngle(1, 1);
 
 % trial3 = 1 1 @ 7
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults(1, 1);
-operator.checkMAA();
 operator.adjustAngle(1, 1)
 
 % trial4 = 0 1 @ 9
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults(0, 1);
-operator.checkMAA();
 operator.adjustAngle(0, 1);
 
 % trial5 = 1 1 @ 8
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults(1, 1);
-operator.checkMAA();
 operator.adjustAngle(1, 1);
 
 % trial6 = 1 1 @ 9
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults(1, 1);
-operator.checkMAA();
 operator.adjustAngle(1, 1);
 
 % trial7 = 0 0 @ 10
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults(0, 0);
-operator.checkMAA();
 operator.adjustAngle(0, 0)
 
 % trial8 = 0 1 @ 9 
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults(0, 1);
-operator.checkMAA();
 operator.adjustAngle(0, 1);
 
 % trial9 = 1 1 @ 8 -- should find uphill MAA at 8
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults(1, 1);
-operator.checkMAA();
 operator.adjustAngle(1, 1);
 
 % trial 10= * 0 @ 10 - should find downhill MAA at 9
 fprintf('\nTrialNum = %d', operator.trialNum);
 operator.recordResults('*', 0);
-operator.checkMAA();
 operator.adjustAngle('*', 0);
 
 

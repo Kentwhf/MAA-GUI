@@ -19,8 +19,8 @@ counter = 0;
 files = NaN;
 numOfSheets = 0;
 
-participant = Participant('sub100', 'm', 8);
-session = Session(participant, 0.08, 4.45, 68.00, 'dry', '12/12/12', '14:08', 8, 8, 8, 8, 8, 8, 8, 8, 'iDAPT000');
+% participant = Participant('sub100', 'm', 8);
+% session = Session(participant, 0.08, 4.45, 68.00, 'dry', '12/12/12', '14:08', 8, 8, 8, 8, 8, 8, 8, 8, 'iDAPT000');
 
 %% ---------- Make the ActiveX Excel App into MATLAB ----------
 Excel = actxserver ('Excel.Application');
@@ -106,8 +106,9 @@ for file = 1 : numExcelFiles
             if downResult == -1
                 downResult = '*';
             end
-            operator.recordResults(upResult, downResult);
-            operator.adjustAngle(upResult, downResult);
+            %operator.recordResults(upResult, downResult);
+            %operator.adjustAngle(upResult, downResult);
+            operator.ProcessInput(operator.predictedAngle, upResult, downResult);
         end
         
         % Get table
@@ -168,6 +169,7 @@ end
 Excel.Quit;
 Excel.delete;
 clear Excel;
+toc
     
 
 

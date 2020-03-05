@@ -3,12 +3,11 @@ classdef Operator <  matlab.mixin.Copyable
     %   Tipper properties during the MAA experiment
     
     %   Initally created by Norman
-    %   Modified and improved by Kent 
+    %   Largely modified and improved by Kent 
     
     %   Very first script stored in I:\winterlab\footwear database\old files\AutomatedDigitizing\GUI\gui
     %   Coding logic embedded in the GUIs is messy, pending to be restructured and refactored
-    %   Class Operator should be the core algorithm being rewritten for MAA testing, if the testing protocol is changed
-    %   The GUIs are one viewer and one controller for display purpose, but they have things related to class Operator
+    %   Class Operator should be the core algorithm being rewritten, if the testing protocol is changed
     %   Such dependency should be eliminated
     
     properties
@@ -36,21 +35,6 @@ classdef Operator <  matlab.mixin.Copyable
     end
     
     properties(Constant)
-        % Some constant properties(fields), not often used, might delete later  
-        
-%         % physical constraints
-%         MAX_ANGLE=15  % physical maximum tipper angle
-%         MIN_ANGLE=0  % minimum angle for the tipper
-%         
-%         % moving the tipper
-%         INCREMENT=1  % increase/decrease by 1 degree as a step
-%         INITIAL_INCREMENT=2  % prior to first slip, increment by 2 degrees
-%         
-%         MAX_VISITS=3  % max number of visited per angle
-%         PASS_THRESHHOLD=2  % 2 is passes at an angle is considered a potential MAA canditate/lower bound
-%         
-%         INITIAL_ANGLE=3  % the first tipper angle starts at 3 degrees
-        
         % directions
         UP='UP'  % up direction macro
         DOWN='DOWN'  % down direction macro
@@ -59,12 +43,9 @@ classdef Operator <  matlab.mixin.Copyable
     methods
         %% Constructor, take in session object info
         function operator = Operator()
-            % operator takes a session object to initialize
-            % operator.session = session;
-            
             % initial angle is 3
             operator.currAngle = 3; 
-            operator.predictedAngle = -1; 
+            operator.predictedAngle = 3; 
 
             % A container recording times of visted angles 
             initKeys = 0:15;
@@ -87,14 +68,12 @@ classdef Operator <  matlab.mixin.Copyable
             operator.lastResultUphill = '*';
             operator.lastResultDownhill = '*';
             
-            % for angle plot in MAAHelperView
-            % operator.tseriesplot = timeseries([], []);
-            
             % The underlying MAA table whose first column as angle index
             % Table is in form of cell matrix, as inputs have different data types, which are 0, 1 amd '*'
             % May consider using another integer value to replace '*' 
             % Then Table can be treated as general matrix of integers
             % Syntax might be cleaner, and reduce time complexity this way?
+            
             operator.results = cell(16,10);
             for i=1:16 
                operator.results{i,1} = i-1;
@@ -109,7 +88,8 @@ classdef Operator <  matlab.mixin.Copyable
             
             % times visited
             operator.lastTestedAngle = operator.currAngle;
-            operator.timesVisitedAngles(operator.currAngle) = operator.timesVisitedAngles(operator.currAngle) + 1;
+            operator.timesVisitedAngles(operator.currAngle) = ...
+                operator.timesVisitedAngles(operator.currAngle) + 1;
             
             fprintf('\n--- Currently at angle %d ---\n', operator.currAngle);
             
@@ -125,10 +105,10 @@ classdef Operator <  matlab.mixin.Copyable
             end
             
             % disp method just for debugging purpose
-            disp(operator.results);
+            % disp(operator.results);
         end
         
-        %% Check for MAA in uphill and downhill. Edge cases are handled when the tipper is adjusted at 0 or 15 degrees
+        %% Check for MAA in uphill and downhill. Edge cases are handled for 0 or 15 degrees
         function checkMAA(operator)
 
             upEntry = [3, 6, 9];
@@ -270,7 +250,7 @@ classdef Operator <  matlab.mixin.Copyable
                     operator.currAngle = operator.nextAngleHelper(operator.currAngle - 1, 'non-increasing');
                     
                 end
-                
+          
             end
             
             % Case 2: (0,1) 
@@ -394,7 +374,7 @@ classdef Operator <  matlab.mixin.Copyable
                     end
                  
                 else
-                    
+     
                     if operator.currAngle + 2 <= 15
                         operator.currAngle = operator.currAngle + 2;
                     end
@@ -404,6 +384,15 @@ classdef Operator <  matlab.mixin.Copyable
             
             operator.predictedAngle = operator.currAngle;
             
+            if ~operator.checkTermination
+                fprintf('Next angle: %d', operator.predictedAngle);
+            end
+            
+            operator.checkMAA();
+        
+            disp(operator.results)
+            
+            fprintf('\nUpMAA = %d, DownMAA = %d\n', operator.uphillMAA, operator.downhillMAA);
         end
        
         %% Check if the current angle is bounded below or above by the given angle
@@ -598,51 +587,40 @@ classdef Operator <  matlab.mixin.Copyable
         end
         
         %% checks if input received are valid
-        function result = checkInput(operator, currAngle, resultUphill, resultDownhill)
-            % Case 1: MAAs all found
-            % No need to proceed further, and print MAAs 
-            
-            % Case 2: Neither MAA is found 
-            % Require both inputs 
-            % Check if move to the suggested angle
-            
-            % Case 3: only one MAA is found 
-            % Process one input and mark the other one as asterisk
-            % Check if move to the suggested angle
-            
-            result = 1;
-            if operator.foundUphill && operaotr.foundDownhill
-                fprintf('\nBoth MAAs found. UpMAA = %d, DownMAA = %d\n', operator.uphillMAA, operaor.downhillMAA);
+        function processInput(operator, currAngle, resultUphill, resultDownhill)
+            if operator.foundUphill && operator.foundDownhill
+                fprintf('\nBoth MAAs are found! UpMAA = %d, DownMAA = %d\n', ...
+                    operator.uphillMAA, operator.downhillMAA);
                 return
             end    
                
-            if ~operator.foundUphill && ~operaotr.foundDownhill
-                if operator.predictedAngle == currAngle && (resultUphill ~= '*' && resultDownhill ~= '*')
+            if ~operator.foundUphill && ~operator.foundDownhill
+                if operator.predictedAngle == currAngle && (resultUphill ~= '*' ...
+                    && resultDownhill ~= '*')
                     operator.recordResults(resultUphill, resultDownhill);
                     operator.adjustAngle(resultUphill, resultDownhill); 
                     return
                 end
             end
             
-            if operator.foundUphill && ~operaotr.foundDownhill
+            if operator.foundUphill && ~operator.foundDownhill
                 if operator.predictedAngle == currAngle && resultDownhill ~= '*'
-                    operator.recordResults(resultUphill, resultDownhill);
-                    operator.adjustAngle(resultUphill, resultDownhill);
-                    return 
+                    operator.recordResults('*', resultDownhill);
+                    operator.adjustAngle('*', resultDownhill);
+                    return
                 end
             end
             
-            if ~operator.foundUphill && operaotr.foundDownhill
+            if ~operator.foundUphill && operator.foundDownhill
                 if operator.predictedAngle == currAngle && resultUphill ~= '*'
-                    operator.recordResults(resultUphill, resultDownhill);
-                    operator.adjustAngle(resultUphill, resultDownhill);
-                    return 
+                    operator.recordResults(resultUphill, '*');
+                    operator.adjustAngle(resultUphill, '*');
+                    return
                 end
             end
-             
-            disp('\nCheck your input\n')
-            result = 0;
-            return
+            
+            disp('Check your input')
+    
         end
        
     end

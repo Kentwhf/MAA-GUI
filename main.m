@@ -35,7 +35,9 @@
 % varaibles eg.table as future reference.
 
 % --- Pseudo Code for Step 2 and 3 ---
-%
+% 
+% Initilize an Operator objective 
+% Make some placeholder for inputs
 % if operator.checkInput(resultUphill, resultDownhill, angle):
 %   if Both MAA found:
 %       return 
@@ -43,8 +45,6 @@
 %       % where 
 %       operator.recordResults()
 %       operator.checkMAA()
-% else:
-%   ask for input again
 %   
 % -----------------------------------------------------------------------
 
